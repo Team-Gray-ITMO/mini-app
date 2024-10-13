@@ -7,7 +7,6 @@ COPY ./*.json ./
 
 RUN npm install
 
-#TODO Reduce the amount of files in build container later
 COPY ../.. ./
 
 RUN npm run build

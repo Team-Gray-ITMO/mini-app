@@ -1,0 +1,12 @@
+docker/
+.dockerignore
+node_modules
+vendor
+.env
+*.log
+*.tmp
+*~
+build/
+dist/
+.idea/
+.vscode/
