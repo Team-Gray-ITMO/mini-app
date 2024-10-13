@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   resume-mini-app:
+    container_name: resume-mini-app
     build:
       context: ..
       dockerfile: docker/Dockerfile
