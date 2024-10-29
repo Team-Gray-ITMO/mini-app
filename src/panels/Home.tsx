@@ -1,44 +1,93 @@
-import { FC } from 'react';
+import {FC, useEffect, useState} from 'react';
 import {
   Panel,
-  PanelHeader,
-  Header,
   Button,
-  Group,
-  Cell,
   Div,
   Avatar,
-  NavIdProps,
+  NavIdProps, List, Text, Image,
 } from '@vkontakte/vkui';
-import { UserInfo } from '@vkontakte/vk-bridge';
-import { useRouteNavigator } from '@vkontakte/vk-mini-apps-router';
+import {UserInfo} from '@vkontakte/vk-bridge';
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
 }
 
-export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
-  const { photo_200, city, first_name, last_name } = { ...fetchedUser };
-  const routeNavigator = useRouteNavigator();
+class CV {
+  constructor(
+    public id: number,
+    public name: string,
+    public creationTime: string,
+  ) {
+  }
+}
+
+// TODO: can use UserInfo from VK Bridge after supporting it
+class UserData {
+  constructor(
+    public id: number,
+    public name: string,
+    public avatar: string,
+  ) {
+  }
+}
+
+export const Home: FC<HomeProps> = ({id, fetchedUser}) => {
+  const [CVs, setCVs] = useState<CV[]>([]);
+  const [userData, setUserData] = useState<UserData>(null);
+
+  useEffect(() => {
+    setCVs([
+      new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
+      new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
+      new CV(2, 'Резюме аналитика', '19.07.2024 12:28:31'),
+      new CV(2, 'Резюме DevOps', '17.07.2024 09:19:01')
+    ]);
+    setUserData(new UserData(1, 'Александр', '/src/assets/persik.png'))
+
+    // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
+    document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
+    document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee')
+  }, []);
 
   return (
     <Panel id={id}>
-      <PanelHeader>Главная</PanelHeader>
-      {fetchedUser && (
-        <Group header={<Header mode="secondary">User Data Fetched with VK Bridge</Header>}>
-          <Cell before={photo_200 && <Avatar src={photo_200} />} subtitle={city?.title}>
-            {`${first_name} ${last_name}`}
-          </Cell>
-        </Group>
-      )}
-
-      <Group header={<Header mode="secondary">Navigation Example</Header>}>
-        <Div>
-          <Button stretched size="l" mode="secondary" onClick={() => routeNavigator.push('persik')}>
-            Покажите Персика, пожалуйста!
-          </Button>
+      <Div>
+        <Div style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: '0'}}>
+          <Image size={70} src='/logo.svg'/>
+          {userData &&
+            <Div style={{display: "flex", gap: "50px", alignItems: "center"}}>
+              <Text style={{fontSize: '1.5em', color: 'white'}}>{userData.name}</Text>
+              <Avatar size={70} src={userData.avatar}/>
+            </Div>
+          }
         </Div>
-      </Group>
+      </Div>
+
+      <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
+        <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
+        <List style={{backgroundColor: 'white', width: '75%', borderRadius: '30px'}}>
+          {CVs.map((CV) =>
+            <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} key={CV.id}>
+              <Text style={{color: '#747373', fontSize: '1.5em', margin: '10px 40px'}}>{CV.name}</Text>
+              <Text style={{color: '#747373', fontSize: '1.5em', margin: '10px 40px'}}>{CV.creationTime}</Text>
+            </Div>)}
+        </List>
+      </Div>
+
+      <Div style={{display: 'flex', justifyContent: 'center', margin: '30px 0'}}>
+        <Button
+          size='l'
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '15px',
+            color: 'black',
+            height: '80px',
+            width: '20%',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'
+          }}>
+          <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать резюме</Text>
+        </Button>
+      </Div>
     </Panel>
   );
 };
