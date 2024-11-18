@@ -1,6 +1,6 @@
 import {FC, useEffect} from "react";
 import {Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
-import './InProcess.css'
+import '../styles/InProcess.css'
 
 
 export const InProcess: FC<NavIdProps> = ({ id }) => {

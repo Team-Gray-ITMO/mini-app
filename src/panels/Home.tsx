@@ -8,7 +8,7 @@ import {
 } from '@vkontakte/vkui';
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
-import './Home.css'
+import '../styles/Home.css'
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -55,9 +55,9 @@ export const Home: FC<HomeProps> = ({id}) => {
 
   return (
     <Panel id={id}>
-      <Div>
         <Div className="header-box">
-          <Image noBorder={true} size={70} src='/logo.png'/>
+          <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
+                 src='/logo.png'/>
           {userData &&
             <Div className="user-data-box">
               <Text className="username">{userData.name}</Text>
@@ -65,17 +65,23 @@ export const Home: FC<HomeProps> = ({id}) => {
             </Div>
           }
         </Div>
-      </Div>
 
       <Div className="history-box">
-        <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
+        <Text style={{color: 'white', fontSize: '32px'}}>История</Text>
         <List className="history-list">
-          {CVs.map((CV) =>
-            <Div className="history-item-box" key={CV.id}>
-              <Text className="history-text">{CV.name}</Text>
-              <Text className="history-text">{CV.creationTime}</Text>
-            </Div>)}
+          {CVs.map((CV) => (
+              <li
+                  className="history-item-box"
+                  key={CV.id}
+                  onClick={() => routeNavigator.push('cv-page')}
+                  style={{cursor: 'pointer'}}
+              >
+                <Text className="history-text">{CV.name}</Text>
+                <Text className="history-text">{CV.creationTime}</Text>
+              </li>
+          ))}
         </List>
+
       </Div>
 
       <Div className="button-box">

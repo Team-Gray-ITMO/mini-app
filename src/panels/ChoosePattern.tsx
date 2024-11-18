@@ -1,6 +1,6 @@
 import {Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
 import {FC, useEffect, useState} from "react";
-import "./ChoosePattern.css"
+import "../styles/ChoosePattern.css"
 
 export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
   const patterns = ["Название шаблона", "Название шаблона", "Название шаблона", "Название шаблона"]
@@ -17,6 +17,10 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
 
   return (
     <Panel id={id}>
+      <Div className="header-box">
+        <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
+               src='/logo.png'/>
+      </Div>
       <Div className="main-container">
         <Text className="text-header">Выберите шаблон</Text>
 
