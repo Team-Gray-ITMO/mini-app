@@ -5,11 +5,14 @@ import {
     List, Text, Image
 } from '@vkontakte/vkui';
 import {useEffect, useState} from "react";
+import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import '../styles/CVPage.css';
 
 export const CVPage = ({id}) => {
 
-    const experience = 42;
+    const routeNavigator = useRouteNavigator();
     const grade = 4.2;
+    const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
 
     useEffect(() => {
@@ -26,7 +29,7 @@ export const CVPage = ({id}) => {
     }, []);
 
     return (
-        <Panel id={id}>
+        <Panel id={id} className="cv-page">
             <Div className="header-box">
                 <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
                        src='/logo.png'/>
@@ -52,12 +55,11 @@ export const CVPage = ({id}) => {
                     }}>
                         <Text style={{
                             marginLeft: '50px',
-                            fontSize: '24px',
-                            color: 'black'
+                            fontSize: '24px'
                         }}>Скачать:</Text>
-                        <Image style={{width: '75px', height: '70px'}} src='/word.png'/>
-                        <Image style={{width: '75px', height: '70px'}} src='/pdf.png'/>
-                        <Image style={{width: '55px', height: '70px'}} src='/html.png'/>
+                        <Image className="upload-button" style={{width: '75px', height: '70px'}} src='/word.png'/>
+                        <Image className="upload-button" style={{width: '75px', height: '70px'}} src='/pdf.png'/>
+                        <Image className="upload-button" style={{width: '55px', height: '70px'}} src='/html.png'/>
                     </Div>
 
                     <Div style={{
@@ -66,8 +68,8 @@ export const CVPage = ({id}) => {
                         alignItems: 'center',
                         padding: '0'
                     }}>
-                        <Text style={{marginLeft: '50px', fontSize: '24px', color: 'black'}}>Оценка:</Text>
-                        <Text style={{marginLeft: '30px', fontSize: '24px', color: 'black'}}>{grade} / 5.0</Text>
+                        <Text style={{marginLeft: '50px', fontSize: '24px'}}>Оценка:</Text>
+                        <Text style={{marginLeft: '30px', fontSize: '24px'}}>{grade} / 5.0</Text>
                     </Div>
                     <Div style={{
                         height: '70px',
@@ -75,8 +77,8 @@ export const CVPage = ({id}) => {
                         alignItems: 'center',
                         padding: '0'
                     }}>
-                        <Text style={{marginLeft: '50px', fontSize: '24px', color: 'black'}}>Начислено опыта:</Text>
-                        <Text style={{marginLeft: '30px', fontSize: '24px', color: 'black'}}>{experience}</Text>
+                        <Text style={{marginLeft: '50px', fontSize: '24px'}}>Начислено опыта:</Text>
+                        <Text style={{marginLeft: '30px', fontSize: '24px'}}>{experience}</Text>
                     </Div>
                     <Div style={{
                         display: 'flex',
@@ -85,15 +87,14 @@ export const CVPage = ({id}) => {
                     }}>
                         <Text style={{
                             fontSize: '32px',
-                            color: 'black',
                             marginBottom: '20px'
                         }}>Советы:</Text>
                     </Div>
-                    <List style={{ paddingLeft: '50px' }}>
+                    <List style={{paddingLeft: '50px'}}>
                         {advices.map((advice, index) => (
-                            <Div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                <Text style={{ color: 'black', marginRight: '10px', fontSize: '24px' }}>•</Text>
-                                <Text style={{ color: 'black', fontSize: '24px' }}>{advice}</Text>
+                            <Div key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '10px'}}>
+                                <Text style={{marginRight: '10px', fontSize: '24px'}}>•</Text>
+                                <Text style={{fontSize: '24px'}}>{advice}</Text>
                             </Div>
                         ))}
                     </List>
@@ -101,10 +102,10 @@ export const CVPage = ({id}) => {
 
                 <Button
                     size='l'
+                    onClick={() => routeNavigator.push('/')}
                     style={{
                         backgroundColor: 'white',
                         borderRadius: '15px',
-                        color: 'black',
                         height: '90px',
                         width: '320px',
                         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
@@ -112,7 +113,7 @@ export const CVPage = ({id}) => {
                         justifyContent: 'center',
                         alignItems: 'center'
                     }}>
-                    <Text style={{color: '#747373', fontSize: '32px', display: 'inline'}}>Готово</Text>
+                    <Text style={{fontSize: '32px', display: 'inline', color: '#494848'}}>Готово</Text>
                 </Button>
             </Div>
         </Panel>
