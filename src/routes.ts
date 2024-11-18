@@ -15,6 +15,13 @@ export const DEFAULT_VIEW_PANELS = {
   PERSIK: 'persik',
 } as const;
 
+export const DEFAULT_VIEW_PANELS_PATHS = {
+  HOME: '/',
+  PERSIK: `/${DEFAULT_VIEW_PANELS.PERSIK}`,
+  PATTERN: `/${DEFAULT_VIEW_PANELS.PATTERN}`,
+  CREATE: `/${DEFAULT_VIEW_PANELS.CREATE}`,
+}
+
 export const routes = RoutesConfig.create([
   createRoot(DEFAULT_ROOT, [
     createView(DEFAULT_VIEW, [
