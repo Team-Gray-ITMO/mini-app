@@ -1,8 +1,12 @@
 import {Button, Text} from "@vkontakte/vkui";
 import {useEffect} from "react";
+import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 
 export const ChoosePattern = () => {
-  const patterns = ["Название шаблона", "Название шаблона", "Название шаблона"]
+  const patterns = ["Название шаблона", "Название шаблона", "Название шаблона"];
+
+  const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
@@ -47,7 +51,12 @@ export const ChoosePattern = () => {
           height: "80px",
           width: "20%",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)"
-        }}>
+        }}
+        onClick={() => {
+            console.log("Go to resume edit");
+            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CREATE);
+        }}
+      >
         <Text style={{color: "#747373", fontSize: "2em", margin: "10px 15px"}}>Выбрать</Text>
       </Button>
     </div>
