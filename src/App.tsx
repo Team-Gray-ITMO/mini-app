@@ -6,6 +6,7 @@ import {ChoosePattern} from "./panels/ChoosePattern.tsx";
 import {useActiveVkuiLocation} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS} from "./routes.ts";
 import {InProcess} from "./panels/InProcess.tsx";
+import {CVPage} from "./panels/CVPage.tsx";
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
@@ -27,6 +28,7 @@ export const App = () => {
       <Home id="home" />
       <ChoosePattern id="choose_pattern" />
       <InProcess id="in_process"/>
+      <CVPage id="cv-page"/>
     </View>
   );
 };
