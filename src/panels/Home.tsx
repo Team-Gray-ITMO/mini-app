@@ -7,6 +7,8 @@ import {
   NavIdProps, List, Text, Image,
 } from '@vkontakte/vkui';
 import {UserInfo} from '@vkontakte/vk-bridge';
+import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import './Home.css'
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -31,7 +33,9 @@ class UserData {
   }
 }
 
-export const Home: FC<HomeProps> = ({id, fetchedUser}) => {
+export const Home: FC<HomeProps> = ({id}) => {
+  const routeNavigator = useRouteNavigator();
+
   const [CVs, setCVs] = useState<CV[]>([]);
   const [userData, setUserData] = useState<UserData>(null);
 
@@ -52,40 +56,31 @@ export const Home: FC<HomeProps> = ({id, fetchedUser}) => {
   return (
     <Panel id={id}>
       <Div>
-        <Div style={{display: "flex", justifyContent: "space-between", alignItems: "center", padding: '0'}}>
-          <Image size={70} src='/logo.svg'/>
+        <Div className="header-box">
+          <Image noBorder={true} size={70} src='/logo.svg'/>
           {userData &&
-            <Div style={{display: "flex", gap: "50px", alignItems: "center"}}>
-              <Text style={{fontSize: '1.5em', color: 'white'}}>{userData.name}</Text>
-              <Avatar size={70} src={userData.avatar}/>
+            <Div className="user-data-box">
+              <Text className="username">{userData.name}</Text>
+              <Avatar noBorder={true} size={70} src={userData.avatar}/>
             </Div>
           }
         </Div>
       </Div>
 
-      <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
+      <Div className="history-box">
         <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
-        <List style={{backgroundColor: 'white', width: '75%', borderRadius: '30px'}}>
+        <List className="history-list">
           {CVs.map((CV) =>
-            <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} key={CV.id}>
-              <Text style={{color: '#747373', fontSize: '1.5em', margin: '10px 40px'}}>{CV.name}</Text>
-              <Text style={{color: '#747373', fontSize: '1.5em', margin: '10px 40px'}}>{CV.creationTime}</Text>
+            <Div className="history-item-box" key={CV.id}>
+              <Text className="history-text">{CV.name}</Text>
+              <Text className="history-text">{CV.creationTime}</Text>
             </Div>)}
         </List>
       </Div>
 
-      <Div style={{display: 'flex', justifyContent: 'center', margin: '30px 0'}}>
-        <Button
-          size='l'
-          style={{
-            backgroundColor: 'white',
-            borderRadius: '15px',
-            color: 'black',
-            height: '80px',
-            width: '20%',
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'
-          }}>
-          <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать резюме</Text>
+      <Div className="button-box">
+        <Button onClick={() => routeNavigator.push('choose_pattern')} className="button">
+          <Text className="button-text">Создать резюме</Text>
         </Button>
       </Div>
     </Panel>

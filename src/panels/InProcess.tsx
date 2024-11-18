@@ -1,7 +1,9 @@
-import {useEffect} from "react";
+import {FC, useEffect} from "react";
+import {Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
+import './InProcess.css'
 
 
-export const InProcess = () => {
+export const InProcess: FC<NavIdProps> = ({ id }) => {
 
   useEffect(() => {
     document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
@@ -9,11 +11,13 @@ export const InProcess = () => {
   }, []);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", width: "100%" }}>
-      <div style={{ height: "70%", width: "70%", backgroundColor: "white", borderRadius: "20px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <img src="/src/assets/loading.gif" style={{ height: "400px", width: "400px"}}/>
-        <p style={{ color: "#747373", fontSize: "1.6em" }}>Загрузка</p>
-      </div>
-    </div>
+    <Panel id={id}>
+      <Div className="main-container">
+        <Div className="loading-container">
+          <Image noBorder={true} height={300} className="loading-gif" src="/src/assets/loading.gif"/>
+          <Text className="loading-text">Загрузка</Text>
+        </Div>
+      </Div>
+    </Panel>
   )
 }

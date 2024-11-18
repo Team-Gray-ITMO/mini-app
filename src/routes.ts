@@ -12,14 +12,14 @@ export const DEFAULT_VIEW = 'default_view';
 
 export const DEFAULT_VIEW_PANELS = {
   HOME: 'home',
-  PERSIK: 'persik',
+  CHOOSE_PATTERN: 'choose_pattern'
 } as const;
 
 export const routes = RoutesConfig.create([
   createRoot(DEFAULT_ROOT, [
     createView(DEFAULT_VIEW, [
       createPanel(DEFAULT_VIEW_PANELS.HOME, '/', []),
-      createPanel(DEFAULT_VIEW_PANELS.PERSIK, `/${DEFAULT_VIEW_PANELS.PERSIK}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.CHOOSE_PATTERN, `/${DEFAULT_VIEW_PANELS.CHOOSE_PATTERN}`, []),
     ]),
   ]),
 ]);
