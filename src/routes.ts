@@ -12,7 +12,8 @@ export const DEFAULT_VIEW = 'default_view';
 
 export const DEFAULT_VIEW_PANELS = {
   HOME: 'home',
-  CHOOSE_PATTERN: 'choose_pattern'
+  CHOOSE_PATTERN: 'choose_pattern',
+  CV_PAGE: 'cv-page'
 } as const;
 
 export const routes = RoutesConfig.create([
@@ -20,6 +21,7 @@ export const routes = RoutesConfig.create([
     createView(DEFAULT_VIEW, [
       createPanel(DEFAULT_VIEW_PANELS.HOME, '/', []),
       createPanel(DEFAULT_VIEW_PANELS.CHOOSE_PATTERN, `/${DEFAULT_VIEW_PANELS.CHOOSE_PATTERN}`, []),
+      createPanel(DEFAULT_VIEW_PANELS.CV_PAGE, `/${DEFAULT_VIEW_PANELS.CV_PAGE}`, [])
     ]),
   ]),
 ]);

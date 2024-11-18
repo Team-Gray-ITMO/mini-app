@@ -57,7 +57,7 @@ export const Home: FC<HomeProps> = ({id}) => {
     <Panel id={id}>
       <Div>
         <Div className="header-box">
-          <Image noBorder={true} size={70} src='/logo.svg'/>
+          <Image noBorder={true} size={70} src='/logo.png'/>
           {userData &&
             <Div className="user-data-box">
               <Text className="username">{userData.name}</Text>
