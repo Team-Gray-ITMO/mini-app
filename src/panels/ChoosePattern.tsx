@@ -1,56 +1,45 @@
-import {Button, Text} from "@vkontakte/vkui";
-import {useEffect} from "react";
+import {Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
+import {FC, useEffect, useState} from "react";
+import "./ChoosePattern.css"
 
-export const ChoosePattern = () => {
-  const patterns = ["Название шаблона", "Название шаблона", "Название шаблона"]
+export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
+  const patterns = ["Название шаблона", "Название шаблона", "Название шаблона", "Название шаблона"]
+  const [selectedPattern, setSelectedPattern] = useState<number | undefined>(null);
 
   useEffect(() => {
     document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
     document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
   }, []);
 
-  return (
-    <div style={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      height: "100%",
-      gap: "20px"
-    }}>
-      <h1 style={{ color: "white" }}>Выберите шаблон</h1>
-      <div style={{
-        display: "flex",
-        width: "70%",
-        height: "60%",
-        backgroundColor: "white",
-        borderRadius: "10px",
-        gap: "20px",
-        padding: "30px"
-      }}>
-        {patterns.map((pattern) => {
-          return (
-            <div style={{ textAlign: "center"}}>
-              <img style={{ width: "150px", height: "200px" }} src="/src/assets/test_pattern.png"/>
-              <p style={{ color: "#747373", fontSize: "1.3em" }}>{pattern}</p>
-            </div>
-          )
-        })}
-      </div>
+  const handleClick = (index) => {
+    setSelectedPattern(index)
+  };
 
-      <Button
-        size="l"
-        style={{
-          backgroundColor: "white",
-          borderRadius: "15px",
-          color: "black",
-          height: "80px",
-          width: "20%",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)"
-        }}>
-        <Text style={{color: "#747373", fontSize: "2em", margin: "10px 15px"}}>Выбрать</Text>
-      </Button>
-    </div>
+  return (
+    <Panel id={id}>
+      <Div className="main-container">
+        <Text className="text-header">Выберите шаблон</Text>
+
+        <Div className="patterns-box">
+          {patterns.map((pattern, index) => {
+            return (
+              <Div
+                key={index}
+                className={`pattern ${selectedPattern === index ? 'selected' : ''}`}
+                onClick={() => handleClick(index)}
+              >
+                <Image className="pattern-image" src="/src/assets/test_pattern.png"/>
+                <Text className="pattern-name">{pattern}</Text>
+              </Div>
+            )
+          })}
+        </Div>
+
+        <Button className="button">
+          <Text className="button-text">Выбрать</Text>
+        </Button>
+      </Div>
+    </Panel>
   )
 }
 
