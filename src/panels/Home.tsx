@@ -9,6 +9,7 @@ import {
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/Home.css'
+import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -85,7 +86,7 @@ export const Home: FC<HomeProps> = ({id}) => {
       </Div>
 
       <Div className="button-box">
-        <Button onClick={() => routeNavigator.push('choose_pattern')} className="button">
+        <Button onClick={() => routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN)} className="button">
           <Text className="button-text">Создать резюме</Text>
         </Button>
       </Div>

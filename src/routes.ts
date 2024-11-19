@@ -12,16 +12,25 @@ export const DEFAULT_VIEW = 'default_view';
 
 export const DEFAULT_VIEW_PANELS = {
   HOME: 'home',
-  CHOOSE_PATTERN: 'choose_pattern',
+  PATTERN: 'pattern',
+  CREATE: 'create',
   CV_PAGE: 'cv-page'
 } as const;
+
+export const DEFAULT_VIEW_PANELS_PATHS = {
+  HOME: '/',
+  PATTERN: `/${DEFAULT_VIEW_PANELS.PATTERN}`,
+  CREATE: `/${DEFAULT_VIEW_PANELS.CREATE}`,
+  CV_PAGE: `/${DEFAULT_VIEW_PANELS.CV_PAGE}`,
+}
 
 export const routes = RoutesConfig.create([
   createRoot(DEFAULT_ROOT, [
     createView(DEFAULT_VIEW, [
-      createPanel(DEFAULT_VIEW_PANELS.HOME, '/', []),
-      createPanel(DEFAULT_VIEW_PANELS.CHOOSE_PATTERN, `/${DEFAULT_VIEW_PANELS.CHOOSE_PATTERN}`, []),
-      createPanel(DEFAULT_VIEW_PANELS.CV_PAGE, `/${DEFAULT_VIEW_PANELS.CV_PAGE}`, [])
+      createPanel(DEFAULT_VIEW_PANELS.HOME, DEFAULT_VIEW_PANELS_PATHS.HOME, []),
+      createPanel(DEFAULT_VIEW_PANELS.PATTERN, DEFAULT_VIEW_PANELS_PATHS.PATTERN, []),
+      createPanel(DEFAULT_VIEW_PANELS.CREATE, DEFAULT_VIEW_PANELS_PATHS.CREATE, []),
+        createPanel(DEFAULT_VIEW_PANELS.CV_PAGE, DEFAULT_VIEW_PANELS_PATHS.CV_PAGE, [])
     ]),
   ]),
 ]);

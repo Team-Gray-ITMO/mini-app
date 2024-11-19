@@ -1,15 +1,16 @@
-import {useState, useEffect, ReactNode} from 'react';
-import bridge, {UserInfo} from '@vkontakte/vk-bridge';
-import {View} from '@vkontakte/vkui';
-import {Home} from "./panels";
+import { useState, useEffect, ReactNode } from 'react';
+import bridge, { UserInfo } from '@vkontakte/vk-bridge';
+import {View, SplitLayout, SplitCol, Panel, Button} from '@vkontakte/vkui';
+import {useActiveVkuiLocation, useRouteNavigator} from '@vkontakte/vk-mini-apps-router';
+
+import { Home } from './panels';
+import {DEFAULT_VIEW, DEFAULT_VIEW_PANELS} from "./routes.ts";
 import {ChoosePattern} from "./panels/ChoosePattern.tsx";
-import {useActiveVkuiLocation} from "@vkontakte/vk-mini-apps-router";
-import {DEFAULT_VIEW_PANELS} from "./routes.ts";
-import {InProcess} from "./panels/InProcess.tsx";
+import {Resume} from "./panels/Resume.tsx";
 import {CVPage} from "./panels/CVPage.tsx";
 
 export const App = () => {
-  const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
+  const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>();
 
@@ -19,16 +20,27 @@ export const App = () => {
       setUser(user);
       setPopout(null);
     }
-
     fetchData();
   }, []);
 
   return (
-    <View activePanel={activePanel}>
-      <Home id="home" />
-      <ChoosePattern id="choose_pattern" />
-      <InProcess id="in_process"/>
-      <CVPage id="cv-page"/>
-    </View>
+    <SplitLayout popout={popout}>
+      <SplitCol>
+        <View nav={DEFAULT_VIEW} activePanel={activePanel}>
+          <Panel nav={DEFAULT_VIEW_PANELS.HOME}>
+            <Home id="home" fetchedUser={fetchedUser} />
+          </Panel>
+          <Panel nav={DEFAULT_VIEW_PANELS.PATTERN}>
+            <ChoosePattern />
+          </Panel>
+          <Panel nav={DEFAULT_VIEW_PANELS.CREATE}>
+            <Resume id="resume" fetchedUser={fetchedUser} />
+          </Panel>
+          <Panel nav={DEFAULT_VIEW_PANELS.CV_PAGE}>
+            <CVPage id="cv-page"/>
+          </Panel>
+        </View>
+      </SplitCol>
+    </SplitLayout>
   );
 };
