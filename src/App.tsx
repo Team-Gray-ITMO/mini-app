@@ -7,6 +7,7 @@ import { Home } from './panels';
 import {DEFAULT_VIEW, DEFAULT_VIEW_PANELS} from "./routes.ts";
 import {ChoosePattern} from "./panels/ChoosePattern.tsx";
 import {Resume} from "./panels/Resume.tsx";
+import {CVPage} from "./panels/CVPage.tsx";
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
@@ -35,7 +36,8 @@ export const App = () => {
           <Panel nav={DEFAULT_VIEW_PANELS.CREATE}>
             <Resume id="resume" fetchedUser={fetchedUser} />
           </Panel>
-        </View>
+        <CVPage id="cv-page"/>
+    </View>
       </SplitCol>
     </SplitLayout>
   );

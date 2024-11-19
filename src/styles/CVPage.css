@@ -1,0 +1,12 @@
+.cv-page {
+    color: #494848;
+}
+
+.cv-page .upload-button {
+    transition: 300ms;
+}
+
+.cv-page .upload-button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
