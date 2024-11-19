@@ -31,6 +31,11 @@ class CV {
 export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
     const [userCV, setCV] = useState<CV>(null);
 
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setCV({ ...userCV, [name]: value });
+    };
+
     const routeNavigator = useRouteNavigator();
 
     useEffect(() => {
@@ -67,50 +72,132 @@ export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
 
                                 <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>ФИО</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.snp}</Text>
+                                    <input name='snp'
+                                        style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
+                                            border: 'none',
+                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}} value={userCV.snp} readOnly={false}
+                                    onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Телефон</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.phone}</Text>
+                                    <input name='phone'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               border: 'none',
+                                               padding: '10px',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.phone}
+                                           onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Email</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.email}</Text>
+                                    <input name='email'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.email}
+                                           onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Дата рождения</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.dateOfBirth.toLocaleDateString()}</Text>
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Дата
+                                        рождения</Text>
+                                    <input name='dateOfBirth'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.dateOfBirth.toLocaleDateString()}
+                                           onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город проживания</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.city}</Text>
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город
+                                        проживания</Text>
+                                    <input name='city'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.city}
+                                           onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Образование</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.education}</Text>
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text style={{
+                                        color: '#fff',
+                                        fontSize: '1.5em',
+                                        margin: '10px 40px'
+                                    }}>Образование</Text>
+                                    <input name='education'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.education}
+                                           onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Опыт работы</Text>
-                                    <Text style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                        backgroundColor: '#fff', minWidth: '900px', textAlign: 'center'}}>{userCV.workExperience}</Text>
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Опыт
+                                        работы</Text>
+                                    <input name='workExperience'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '900px',
+                                               textAlign: 'center'
+                                           }} value={userCV.workExperience}
+                                           onChange={handleChange}/>
                                 </Div>
                             </Div>
                         }
                     </Div>
 
-                    <Div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '30px 0', gap: '50px'}}>
+                    <Div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        margin: '30px 0',
+                        gap: '50px'
+                    }}>
                         <Button
                             size='l'
                             style={{
