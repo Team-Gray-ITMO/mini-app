@@ -7,6 +7,8 @@ import {
   NavIdProps, List, Text, Image,
 } from '@vkontakte/vkui';
 import {UserInfo} from '@vkontakte/vk-bridge';
+import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -34,6 +36,8 @@ class UserData {
 export const Home: FC<HomeProps> = ({id, fetchedUser}) => {
   const [CVs, setCVs] = useState<CV[]>([]);
   const [userData, setUserData] = useState<UserData>(null);
+
+  const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     setCVs([
@@ -84,6 +88,9 @@ export const Home: FC<HomeProps> = ({id, fetchedUser}) => {
             height: '80px',
             width: '20%',
             boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)'
+          }}
+          onClick={() => {
+            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN);
           }}>
           <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать резюме</Text>
         </Button>

@@ -1,11 +1,14 @@
-import {Button, Text} from "@vkontakte/vkui";
-import {useEffect} from "react";
+import {Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
+import {FC, useEffect, useState} from "react";
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
+import "./ChoosePattern.css";
 
 export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
   const patterns = ["Название шаблона", "Название шаблона", "Название шаблона", "Название шаблона"]
   const [selectedPattern, setSelectedPattern] = useState<number | undefined>(null);
+
+  const routeNavigator = useRouteNavigator();
 
   useEffect(() => {
     document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
@@ -36,7 +39,9 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
           })}
         </Div>
 
-        <Button className="button">
+        <Button className="button" onClick={() => {
+          routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CREATE);
+        }}>
           <Text className="button-text">Выбрать</Text>
         </Button>
       </Div>
