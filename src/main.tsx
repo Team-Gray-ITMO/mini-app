@@ -2,7 +2,18 @@ import { createRoot } from 'react-dom/client';
 import vkBridge from '@vkontakte/vk-bridge';
 import { AppConfig } from './AppConfig.tsx';
 
-vkBridge.send('VKWebAppInit');
+vkBridge.send('VKWebAppInit')
+    .then((data) => {
+      if (data.result) {
+        console.log("App is initialized!");
+      } else {
+        console.log("Error occurred while initializing!");
+      }
+    })
+    .catch((error) => {
+      // Ошибка
+      console.log("Error: " + error);
+    });
 
 createRoot(document.getElementById('root')!).render(<AppConfig />);
 

@@ -9,9 +9,11 @@ import {
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS, DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
+import {UserResumeInfo} from '../App.tsx';
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
+    currentUser?: UserResumeInfo
 }
 
 class CV {
@@ -28,7 +30,7 @@ class CV {
     }
 }
 
-export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
+export const Resume: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {
     const [userCV, setCV] = useState<CV>(null);
 
     const handleChange = (event) => {
@@ -39,12 +41,41 @@ export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
     const routeNavigator = useRouteNavigator();
 
     useEffect(() => {
-        setCV(new CV('Иванов Иван Иванович', '+79521222332', 'ivanovii@mail.ru', new Date(), 'Санкт-Петербург', '/src/assets/persik.png',
-            'ИТМО - магистр (2024-2026)', 'VK (2024 - н.в.)'));
+        console.log("Got this user info in Resume.tsx: " + JSON.stringify(currentUser, null, 2));
+        console.log(currentUser?.education);
+        console.log(currentUser?.workExperience)
+
+        //const educationInfo = currentUser?.education.
+        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email, currentUser?.dateOfBirth, currentUser?.city,
+            currentUser?.avatar,
+            formatUniversities(currentUser?.education),
+            formatWorkExperience(currentUser?.workExperience)));
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
         document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee')
+
+        function formatUniversities(universities: object[]): string {
+            return universities.map(university => {
+                const chairName = university.chair_name || 'Неизвестно';
+                const educationStatus = university.education_status || 'Неизвестно';
+                const facultyName = university.faculty_name || 'Неизвестно';
+                const name = university.name || 'Неизвестно';
+
+                return `Программа: ${chairName}, Статус: ${educationStatus}, Факультет: ${facultyName}, Университет: ${name}\n`;
+            }).join('\n');
+        }
+
+        function formatWorkExperience(workExperiences: object[]): string {
+            return workExperiences.map(work => {
+                const company = work.company || 'Неизвестно';
+                const position = work.position || 'Неизвестно';
+                const startDate = work.from !== undefined ? work.from : 'Неизвестно';
+                const endDate = work.until !== undefined ? work.until : 'Неизвестно';
+
+                return `${company} - ${position} (${startDate} - ${endDate})`;
+            }).join('\n');
+        }
     }, []);
 
     return (
@@ -127,7 +158,7 @@ export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
                                                backgroundColor: '#fff',
                                                minWidth: '900px',
                                                textAlign: 'center'
-                                           }} value={userCV.dateOfBirth.toLocaleDateString()}
+                                           }} value={userCV.dateOfBirth}
                                            onChange={handleChange}/>
                                 </Div>
 
