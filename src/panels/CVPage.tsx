@@ -7,6 +7,9 @@ import {
 import {useEffect, useState} from "react";
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
+import html2pdf from "html2pdf.js";
+import { saveAs } from 'file-saver';
+import HTMLtoDOCX from 'html-to-docx';
 
 export const CVPage = ({id}) => {
 
@@ -27,6 +30,49 @@ export const CVPage = ({id}) => {
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
         document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
     }, []);
+
+    const htmlString = `
+        <div>
+          <h1 style="font-size: 40px">Резюме по шаблону</h1>
+          <h3 style="font-size: 25px">Александр Александров</h3>
+          <p style="font-size: 20px">Опыт работы</p>
+          <div style="margin-left: 20px">
+           <p><b>ВК 02.2020 – настоящее время</b></p>
+           <p>Разрабатывал новостную ленту</p>
+          </div>  
+        </div>
+      `;
+
+    const exportAsPdf = () => {
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlString;
+      document.body.appendChild(tempDiv);
+
+      html2pdf().from(tempDiv).set({
+        margin: 0,
+        filename: 'CV.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      }).save()
+
+      document.body.removeChild(tempDiv);
+    }
+
+    const exportAsHtml = () => {
+      const blob = new Blob([htmlString], { type: 'text/plain' });
+      saveAs(blob, 'CV.txt');
+    }
+
+    const exportAsWord = async () => {
+      const fileBuffer = await HTMLtoDOCX(htmlString, null, {
+        table: { row: { cantSplit: true } },
+        footer: true,
+        pageNumber: true,
+      });
+
+      const blob = new Blob([fileBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      saveAs(blob, 'CV.docx');
+    }
 
     return (
         <Panel id={id} className="cv-page">
@@ -57,9 +103,9 @@ export const CVPage = ({id}) => {
                             marginLeft: '50px',
                             fontSize: '24px'
                         }}>Скачать:</Text>
-                        <Image className="upload-button" style={{width: '75px', height: '70px'}} src='/word.png'/>
-                        <Image className="upload-button" style={{width: '75px', height: '70px'}} src='/pdf.png'/>
-                        <Image className="upload-button" style={{width: '55px', height: '70px'}} src='/html.png'/>
+                        <Image onClick={exportAsWord} className="upload-button" style={{width: '75px', height: '70px'}} src='/word.png'/>
+                        <Image onClick={exportAsPdf} className="upload-button" style={{width: '75px', height: '70px'}} src='/pdf.png'/>
+                        <Image onClick={exportAsHtml} className="upload-button" style={{width: '55px', height: '70px'}} src='/html.png'/>
                     </Div>
 
                     <Div style={{
