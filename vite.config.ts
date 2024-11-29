@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import legacy from '@vitejs/plugin-legacy';
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 function handleModuleDirectivesPlugin() {
   return {
@@ -27,6 +28,7 @@ export default defineConfig({
   plugins: [
     react(),
     handleModuleDirectivesPlugin(),
+    nodePolyfills(),
     legacy({
       targets: ['defaults', 'not IE 11'],
     }),
