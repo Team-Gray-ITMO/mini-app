@@ -5,15 +5,18 @@ import {
     List, Text, Image
 } from '@vkontakte/vkui';
 import {useEffect, useState} from "react";
-import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
+import {InProcess} from "./InProcess.tsx";
 
 export const CVPage = ({id}) => {
 
     const routeNavigator = useRouteNavigator();
+    const {id: resumeId} = useParams();
     const grade = 4.2;
     const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setAdvices([
@@ -24,9 +27,34 @@ export const CVPage = ({id}) => {
     }, []);
 
     useEffect(() => {
+        const fetchResumeData = async () => {
+            try {
+                const response = await fetch(`https://localhost:8080/resumes/${resumeId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log(data)
+            } catch (error) {
+                console.error("Ошибка при загрузке резюме:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchResumeData();
+    }, [resumeId]);
+
+    useEffect(() => {
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
         document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
     }, []);
+
+    if (loading) {
+        return (
+            <InProcess/>
+        );
+    }
 
     return (
         <Panel id={id} className="cv-page">
