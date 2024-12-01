@@ -34,25 +34,38 @@ class UserData {
   }
 }
 
-export const Home: FC<HomeProps> = ({id}) => {
+export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
 
   const [CVs, setCVs] = useState<CV[]>([]);
   const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
-    setCVs([
-      new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
-      new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
-      new CV(3, 'Резюме аналитика', '19.07.2024 12:28:31'),
-      new CV(4, 'Резюме DevOps', '17.07.2024 09:19:01')
-    ]);
-    setUserData(new UserData(1, 'Александр', '/src/assets/persik.png'))
+    if (fetchedUser) {
+      setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
-    // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
+      const fetchResumes = async () => {
+        try {
+          const response = await fetch(`http://localhost:8080/resumes/history/${fetchedUser.id}`);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          const fetchedCVs = data.map((item) => new CV(item.id, item.name, item.creationTime));
+          setCVs(fetchedCVs);
+        } catch (error) {
+          console.error('Failed to fetch resumes:', error);
+        }
+      };
+
+      fetchResumes();
+    }
+
+    // Set color scheme
     document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
-    document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee')
-  }, []);
+    document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
+
+  }, [fetchedUser]);
 
   return (
     <Panel id={id}>
