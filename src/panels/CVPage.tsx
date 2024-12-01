@@ -5,18 +5,21 @@ import {
     List, Text, Image
 } from '@vkontakte/vkui';
 import {useEffect, useState} from "react";
-import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import html2pdf from "html2pdf.js";
 import { saveAs } from 'file-saver';
 import HTMLtoDOCX from 'html-to-docx';
+import {InProcess} from "./InProcess.tsx";
 
 export const CVPage = ({id}) => {
 
     const routeNavigator = useRouteNavigator();
+    const {id: resumeId} = useParams();
     const grade = 4.2;
     const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setAdvices([
@@ -25,6 +28,25 @@ export const CVPage = ({id}) => {
             'Укажите технологии, которые использовались в вашем опыте работы'
         ]);
     }, []);
+
+    useEffect(() => {
+        const fetchResumeData = async () => {
+            try {
+                const response = await fetch(`https://localhost:8080/resumes/${resumeId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log(data)
+            } catch (error) {
+                console.error("Ошибка при загрузке резюме:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchResumeData();
+    }, [resumeId]);
 
     useEffect(() => {
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
@@ -74,6 +96,11 @@ export const CVPage = ({id}) => {
       saveAs(blob, 'CV.docx');
     }
 
+    if (loading) {
+        return (
+            <InProcess/>
+        );
+    }
     return (
         <Panel id={id} className="cv-page">
             <Div className="header-box">

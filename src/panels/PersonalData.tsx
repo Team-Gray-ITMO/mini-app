@@ -28,12 +28,35 @@ class CV {
     }
 }
 
-export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
+export const PersonalData: FC<ResumeProps> = ({id, fetchedUser}) => {
     const [userCV, setCV] = useState<CV>(null);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
         setCV({ ...userCV, [name]: value });
+    };
+
+    const handleSubmit = async () => {
+        if (!userCV) return;
+
+        try {
+            const response = await fetch('https://localhost:8080/resumes/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userCV),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     const routeNavigator = useRouteNavigator();
@@ -224,9 +247,7 @@ export const Resume: FC<ResumeProps> = ({id, fetchedUser}) => {
                                 boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
                                 minWidth: '320px'
                             }}
-                            onClick={() => {
-                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE);
-                            }}
+                            onClick={handleSubmit}
                         >
                             <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать</Text>
                         </Button>
