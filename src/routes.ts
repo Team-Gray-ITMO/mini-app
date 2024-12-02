@@ -14,7 +14,7 @@ export const DEFAULT_VIEW_PANELS = {
   HOME: 'home',
   PATTERN: 'pattern',
   CREATE: 'create',
-  CV_PAGE: 'cv-page'
+  CV_PAGE: 'cv-page/:id'
 } as const;
 
 export const DEFAULT_VIEW_PANELS_PATHS = {

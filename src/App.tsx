@@ -6,7 +6,7 @@ import {useActiveVkuiLocation, useRouteNavigator} from '@vkontakte/vk-mini-apps-
 import { Home } from './panels';
 import {DEFAULT_VIEW, DEFAULT_VIEW_PANELS} from "./routes.ts";
 import {ChoosePattern} from "./panels/ChoosePattern.tsx";
-import {Resume} from "./panels/Resume.tsx";
+import {PersonalData} from "./panels/PersonalData.tsx";
 import {CVPage} from "./panels/CVPage.tsx";
 
 export class UserResumeInfo {
@@ -82,7 +82,7 @@ export const App = () => {
             <ChoosePattern />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CREATE}>
-            <Resume id="resume" fetchedUser={fetchedUser} currentUser={currentUser} />
+            <PersonalData id="personal-data" fetchedUser={fetchedUser} currentUser={currentUser} />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CV_PAGE}>
             <CVPage id="cv-page"/>
