@@ -94,7 +94,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                 const company = work.company || 'Неизвестно';
                 const position = work.position || 'Неизвестно';
                 const startDate = work.from !== undefined ? work.from : 'Неизвестно';
-                const endDate = work.until !== undefined ? work.until : 'Неизвестно';
+                const endDate = work.until !== undefined ? work.until : 'н.в.';
 
                 return `${company} - ${position} (${startDate} - ${endDate})`;
             }).join('\n');
