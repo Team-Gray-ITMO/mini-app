@@ -9,29 +9,16 @@ import {
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS, DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
-import {UserResumeInfo} from '../App.tsx';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../styles/personal_data.css';
 import {parseDate} from "../utils/vkApiMapping.ts";
+import {CV} from "../models/CV.ts";
+import {UserResumeInfo} from "../models/UserResumeInfo.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
     currentUser?: UserResumeInfo
-}
-
-class CV {
-    constructor(
-        public snp: string,
-        public phone: string,
-        public email: string,
-        public dateOfBirth: Date,
-        public city: string,
-        public avatar: string,
-        public education: string,
-        public workExperience: string
-    ) {
-    }
 }
 
 export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {

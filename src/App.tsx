@@ -8,20 +8,7 @@ import {DEFAULT_VIEW, DEFAULT_VIEW_PANELS} from "./routes.ts";
 import {ChoosePattern} from "./panels/ChoosePattern.tsx";
 import {PersonalData} from "./panels/PersonalData.tsx";
 import {CVPage} from "./panels/CVPage.tsx";
-
-export class UserResumeInfo {
-  constructor(
-      public name: string,
-      public phone: string,
-      public email: string,
-      public dateOfBirth: string,
-      public city: string,
-      public avatar: string,
-      public education: [],
-      public workExperience: [],
-  ) {
-  }
-}
+import {UserResumeInfo} from "./models/UserResumeInfo.ts";
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
