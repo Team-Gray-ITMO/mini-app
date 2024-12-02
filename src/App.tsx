@@ -9,6 +9,7 @@ import {ChoosePattern} from "./panels/ChoosePattern.tsx";
 import {PersonalData} from "./panels/PersonalData.tsx";
 import {CVPage} from "./panels/CVPage.tsx";
 import {UserResumeInfo} from "./models/UserResumeInfo.ts";
+import {mapCareers, mapUniversities} from './utils/vkApiMapping.ts';
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
@@ -46,8 +47,8 @@ export const App = () => {
           userFromAPI.bdate,
           userFromAPI.city.title,
           user.photo_max_orig,
-          userFromAPI.universities,
-          userFromAPI.career);
+          mapUniversities(userFromAPI.universities),
+          mapCareers(userFromAPI.career));
 
       console.log(resumeInfo);
 

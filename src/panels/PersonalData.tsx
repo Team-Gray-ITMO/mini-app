@@ -15,6 +15,8 @@ import '../styles/personal_data.css';
 import {parseDate} from "../utils/vkApiMapping.ts";
 import {CV} from "../models/CV.ts";
 import {UserResumeInfo} from "../models/UserResumeInfo.ts";
+import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
+import {formatUniversities, formatWorkExperience} from "../utils/internalMapping.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -63,40 +65,18 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
 
     useEffect(() => {
         console.log("Got this user info in Resume.tsx: " + JSON.stringify(currentUser, null, 2));
-        console.log(currentUser?.education);
+        console.log(currentUser?.universities);
         console.log(currentUser?.workExperience)
 
         //const educationInfo = currentUser?.education.
         setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email, parseDate(currentUser?.dateOfBirth), currentUser?.city,
             currentUser?.avatar,
-            formatUniversities(currentUser?.education),
+            formatUniversities(currentUser?.universities),
             formatWorkExperience(currentUser?.workExperience)));
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
-        document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee')
-
-        function formatUniversities(universities: object[]): string {
-            return universities.map(university => {
-                const chairName = university.chair_name || 'Неизвестно';
-                const educationStatus = university.education_status || 'Неизвестно';
-                const facultyName = university.faculty_name || 'Неизвестно';
-                const name = university.name || 'Неизвестно';
-
-                return `Программа: ${chairName}, Статус: ${educationStatus}, Факультет: ${facultyName}, Университет: ${name}\n`;
-            }).join('\n');
-        }
-
-        function formatWorkExperience(workExperiences: object[]): string {
-            return workExperiences.map(work => {
-                const company = work.company || 'Неизвестно';
-                const position = work.position || 'Неизвестно';
-                const startDate = work.from !== undefined ? work.from : 'Неизвестно';
-                const endDate = work.until !== undefined ? work.until : 'н.в.';
-
-                return `${company} - ${position} (${startDate} - ${endDate})`;
-            }).join('\n');
-        }
+        document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
     }, []);
 
     return (

@@ -1,3 +1,6 @@
+import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
+import {CareerDto} from "../api/vk/dto/CareerDto.ts";
+
 /**
  * Преобразует строку, представляющую некоторую дату, получаемую из VK API, в объект Date и возвращает его
  * @param dateString некоторая дата, получаемая из VK API, соответствует формату d.m.YYYY
@@ -22,4 +25,41 @@ export function parseDate(dateString: string | undefined) : Date {
 
     const date = new Date(year, month, day);
     return date;
+}
+
+/**
+ * Преобразует массив объектов, представляющих университеты, в которых обучался пользователь, получаемый из VK API,
+ * в массив объектов University и возвращает его
+ * @param apiData массив объектов, представляющих университеты, в которых обучался пользователь
+ */
+export function mapUniversities(apiData: any[]): UniversityDto[] {
+    return apiData.map(item => new UniversityDto(
+        item.id,
+        item.city,
+        item.name,
+        item.faculty,
+        item.faculty_name,
+        item.chair,
+        item.chair_name,
+        item.graduation,
+        item.education_form,
+        item.education_status
+    ));
+}
+
+/**
+ * Преобразует массив объектов, представляющих организации, в которых работал пользователь, получаемый из VK API,
+ * в массив объектов CareerDto и возвращает его
+ * @param apiData массив объектов, представляющих карьеру пользователя
+ */
+export function mapCareers(apiData: any[]): CareerDto[] {
+    return apiData.map(item => new CareerDto(
+        item.group_id,
+        item.company,
+        item.city_id,
+        item.city_name,
+        item.from,
+        item.until,
+        item.position
+    ));
 }
