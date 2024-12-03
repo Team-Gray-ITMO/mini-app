@@ -41,6 +41,12 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
+    setCVs([
+      new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
+      new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
+      new CV(3, 'Резюме аналитика', '19.07.2024 12:28:31'),
+      new CV(4, 'Резюме DevOps', '17.07.2024 09:19:01')
+    ]);
     if (fetchedUser) {
       setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
@@ -54,6 +60,13 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
           const fetchedCVs = data.map((item) => new CV(item.id, item.name, item.creationTime));
           setCVs(fetchedCVs);
         } catch (error) {
+          // TODO: Test data. Remove when frontend -> backend interaction will be established
+          setCVs([
+            new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
+            new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
+            new CV(3, 'Резюме аналитика', '19.07.2024 12:28:31'),
+            new CV(4, 'Резюме DevOps', '17.07.2024 09:19:01')
+          ]);
           console.error('Failed to fetch resumes:', error);
         }
       };
@@ -75,16 +88,16 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
           {userData &&
             <Div className="user-data-box">
               <Text className="username">{userData.name}</Text>
-              <Avatar noBorder={true} size={70} src={userData.avatar}/>
+              <Avatar noBorder={true} size={64} src={userData.avatar}/>
             </Div>
           }
         </Div>
 
       <Div className="history-box">
-        <Text style={{color: 'white', fontSize: '32px'}}>История</Text>
+        <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
         <List className="history-list">
           {CVs.map((CV) => (
-              <li
+              <Div
                   className="history-item-box"
                   key={CV.id}
                   onClick={() => routeNavigator.push(`/cv-page/${CV.id}`)}
@@ -92,15 +105,15 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               >
                 <Text className="history-text">{CV.name}</Text>
                 <Text className="history-text">{CV.creationTime}</Text>
-              </li>
+              </Div>
           ))}
         </List>
 
       </Div>
 
       <Div className="button-box">
-        <Button onClick={() => routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN)} className="button">
-          <Text className="button-text">Создать резюме</Text>
+        <Button size="l" onClick={() => routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN)} className="button">
+          <Text  className="button-text">Создать резюме</Text>
         </Button>
       </Div>
     </Panel>

@@ -18,7 +18,7 @@ export const InProcess: FC<NavIdProps> = ({id}) => {
             </Div>
             <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", margin: '35px'}}>
                 <Div className="main-container">
-                    <Image noBorder={true} height={300} className="loading-gif" src="/src/assets/loading.gif"/>
+                    <Image noBorder={true} height={300} className="loading-gif" src="/loading.gif"/>
                     <Text className="loading-text">Загрузка</Text>
                 </Div>
             </Div>
