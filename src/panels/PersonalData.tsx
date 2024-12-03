@@ -1,22 +1,17 @@
 import {FC, forwardRef, useEffect, useState} from 'react';
-import {
-    Panel,
-    Button,
-    Div,
-    Avatar,
-    NavIdProps, List, Text, Image, Input,
-} from '@vkontakte/vkui';
+import {Avatar, Button, Div, Image, NavIdProps, Panel, Text,} from '@vkontakte/vkui';
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
-import {DEFAULT_VIEW_PANELS, DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
+import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../styles/personal_data.css';
 import {parseDate} from "../utils/vkApiMapping.ts";
 import {CV} from "../models/CV.ts";
 import {UserResumeInfo} from "../models/UserResumeInfo.ts";
-import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {formatUniversities, formatWorkExperience} from "../utils/internalMapping.ts";
+import {ConnectionType} from "../enums/ConnectionType.ts";
+import Select from "react-select/base";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -36,6 +31,12 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
     const handleChange = (event) => {
         const { name, value } = event.target;
         setCV({ ...userCV, [name]: value });
+    };
+
+    const handleConnectionTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newConnectionType = event.target.value as ConnectionType;
+        console.log("Change connection type to new one " + newConnectionType);
+        userCV.preferredConnectionType = newConnectionType;
     };
 
     const handleSubmit = async () => {
@@ -69,7 +70,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         console.log(currentUser?.workExperience)
 
         //const educationInfo = currentUser?.education.
-        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email, parseDate(currentUser?.dateOfBirth), currentUser?.city,
+        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email, ConnectionType.PHONE,
+            parseDate(currentUser?.dateOfBirth), currentUser?.city,
             currentUser?.avatar,
             formatUniversities(currentUser?.universities),
             formatWorkExperience(currentUser?.workExperience)));
@@ -145,7 +147,70 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                            onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Предпочитаемый
+                                        способ связи</Text>
+                                    <Div>
+                                        <label style={{
+                                            color: '#494848',
+                                            fontSize: '1.5em',
+                                            margin: '10px 40px',
+                                            borderRadius: '30px',
+                                            padding: '10px',
+                                            border: 'none',
+                                            backgroundColor: '#fff',
+                                            textAlign: 'center'
+                                        }}>
+                                            <input type="radio"
+                                                   name='connection_type'
+                                                   id="connection_phone"
+                                                   value={ConnectionType.PHONE}
+                                                   checked={userCV.preferredConnectionType == ConnectionType.PHONE}
+                                                   onChange={handleConnectionTypeChange}
+                                                   style={{
+                                                       color: '#494848',
+                                                       fontSize: '1.5em',
+                                                       margin: '10px 40px',
+                                                       borderRadius: '30px',
+                                                       padding: '10px',
+                                                       border: 'none',
+                                                       backgroundColor: '#fff',
+                                                       textAlign: 'center'
+                                                   }}/>
+                                            Телефон
+                                        </label>
+                                        <label style={{
+                                            color: '#494848',
+                                            fontSize: '1.5em',
+                                            margin: '10px 40px',
+                                            borderRadius: '30px',
+                                            padding: '10px',
+                                            border: 'none',
+                                            backgroundColor: '#fff',
+                                            textAlign: 'center'
+                                        }}>
+                                            <input type="radio"
+                                                   name='connection_type'
+                                                   id="connection_email"
+                                                   value={ConnectionType.EMAIL}
+                                                   checked={userCV.preferredConnectionType == ConnectionType.EMAIL}
+                                                   onChange={handleConnectionTypeChange}
+                                                   style={{
+                                                       color: '#494848',
+                                                       fontSize: '1.5em',
+                                                       margin: '10px 40px',
+                                                       borderRadius: '30px',
+                                                       padding: '10px',
+                                                       border: 'none',
+                                                       backgroundColor: '#fff',
+                                                       textAlign: 'center'
+                                                   }}/>
+                                            Email
+                                        </label>
+                                    </Div>
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Дата
                                         рождения</Text>
                                     <DatePicker name='dateOfBirth' selected={userCV.dateOfBirth} onChange={(date) => {
@@ -153,10 +218,11 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                             userCV.dateOfBirth = date;
                                         }
                                     }}
-                                                customInput={<ExampleCustomInput className='calendar-button' />}  showMonthYearDropdown={true}/>
+                                                customInput={<ExampleCustomInput className='calendar-button'/>}
+                                                showMonthYearDropdown={true}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город
                                         проживания</Text>
                                     <input name='city'
@@ -174,7 +240,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                            onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{
                                         color: '#fff',
                                         fontSize: '1.5em',
@@ -195,7 +261,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                            onChange={handleChange}/>
                                 </Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Опыт
                                         работы</Text>
                                     <input name='workExperience'
@@ -219,7 +285,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                     <Div style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
+                        flexDirection: 'column',
                         margin: '30px 0',
                         gap: '50px'
                     }}>
@@ -251,7 +317,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                             }}
                             onClick={handleSubmit}
                         >
-                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать</Text>
+                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Перейти к следующему этапу</Text>
                         </Button>
                     </Div>
 
