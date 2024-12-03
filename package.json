@@ -21,6 +21,7 @@
     "file-saver": "^2.0.5",
     "html-to-docx": "^1.8.0",
     "html2pdf.js": "^0.10.2",
+    "multiselect-react-dropdown": "^2.0.25",
     "react": "^18.2.0",
     "react-datepicker": "^7.5.0",
     "react-dom": "^18.2.0",

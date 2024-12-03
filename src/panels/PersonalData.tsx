@@ -12,6 +12,9 @@ import {UserResumeInfo} from "../models/UserResumeInfo.ts";
 import {formatUniversities, formatWorkExperience} from "../utils/internalMapping.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import Select from "react-select/base";
+import {Multiselect} from "multiselect-react-dropdown";
+import {ResumeApiClient} from "../api/internal/client/ResumeApiClient.ts";
+import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -28,6 +31,28 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         ),
     );
 
+    const resumeApiClient : ResumeApiClient = new ResumeApiClient();
+
+    const selectState = {
+        options: resumeApiClient.getSpecialities()
+    };
+
+    const workFormatsSelect = {
+        options: resumeApiClient.getWorkFormats()
+    };
+
+    const onSpecialityChange = (selectedList, selectedItem) => {
+        setCV({ ...userCV, preferredSpecialities: selectedList });
+    };
+
+    const onWorkFormatChange = (selectedList, selectedItem) => {
+        setCV({ ...userCV, preferredWorkFormats: selectedList });
+    };
+
+    const onMoveChange = (event) => {
+        setCV({ ...userCV, isReadyToMove: event.target.checked });
+    };
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setCV({ ...userCV, [name]: value });
@@ -35,8 +60,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
 
     const handleConnectionTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newConnectionType = event.target.value as ConnectionType;
-        console.log("Change connection type to new one " + newConnectionType);
-        userCV.preferredConnectionType = newConnectionType;
+        setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
     const handleSubmit = async () => {
@@ -69,9 +93,13 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         console.log(currentUser?.universities);
         console.log(currentUser?.workExperience)
 
-        //const educationInfo = currentUser?.education.
-        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email, ConnectionType.PHONE,
-            parseDate(currentUser?.dateOfBirth), currentUser?.city,
+        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email,
+            ConnectionType.PHONE,
+            [],
+            [],
+            parseDate(currentUser?.dateOfBirth),
+            currentUser?.city,
+            false,
             currentUser?.avatar,
             formatUniversities(currentUser?.universities),
             formatWorkExperience(currentUser?.workExperience)));
@@ -211,6 +239,30 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Предпочитаемая специальность</Text>
+                                    <Multiselect
+                                        id='preferredSpeciality'
+                                        options={selectState.options}
+                                        onSelect={onSpecialityChange}
+                                        onRemove={onSpecialityChange}
+                                        displayValue="name"
+                                        placeholder='Выберите предпочитаемую специальность'
+                                    />
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Формат работы</Text>
+                                    <Multiselect
+                                        id='preferredWorkFormat'
+                                        options={workFormatsSelect.options}
+                                        onSelect={onWorkFormatChange}
+                                        onRemove={onWorkFormatChange}
+                                        displayValue="name"
+                                        placeholder='Выберите формат работы'
+                                    />
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Дата
                                         рождения</Text>
                                     <DatePicker name='dateOfBirth' selected={userCV.dateOfBirth} onChange={(date) => {
@@ -238,6 +290,17 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                                textAlign: 'center'
                                            }} value={userCV.city}
                                            onChange={handleChange}/>
+                                </Div>
+
+                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 10px'}}>Готовность к
+                                        переезду или командировкам</Text>
+                                    <input
+                                        type="checkbox"
+                                        name='isReadyToMove'
+                                        checked={userCV.isReadyToMove}
+                                        onChange={onMoveChange}
+                                    />
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>

@@ -1,4 +1,6 @@
 import {ConnectionType} from "../enums/ConnectionType.ts";
+import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
+import {WorkFormatDto} from "../api/internal/dto/WorkFormatDto.ts";
 
 export class CV {
     constructor(
@@ -6,8 +8,11 @@ export class CV {
         public phone: string,
         public email: string,
         public preferredConnectionType: ConnectionType,
+        public preferredSpecialities: SpecialityDto[],
+        public preferredWorkFormats: WorkFormatDto[],
         public dateOfBirth: Date,
         public city: string,
+        public isReadyToMove: boolean,
         public avatar: string,
         public education: string,
         public workExperience: string
