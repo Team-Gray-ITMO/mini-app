@@ -1,0 +1,12 @@
+.calendar-button {
+    background-color: #fff;
+    color: #494848;
+    font-size: 1.5em;
+    margin: 10px 40px;
+    border-radius: 30px;
+    padding: 10px;
+    border: none;
+    background-color: #fff;
+    min-width: 400px;
+    text-align: center;
+}
