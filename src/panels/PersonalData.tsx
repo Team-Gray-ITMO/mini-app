@@ -105,7 +105,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         <Panel id={id}>
             <Div style={{width: '100%'}}>
                 <Div>
-                    <Image size={70} src='/logo.svg'/>
+                    <Image size={64} src='/logo.svg'/>
                 </Div>
 
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
