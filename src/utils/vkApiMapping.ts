@@ -20,7 +20,7 @@ export function parseDate(dateString: string | undefined) : Date {
     }
 
     const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; // месяц начинается с 0 в JS, из VK приходит в естественном виде
+    const month = parseInt(parts[1], 10) - 1; // месяц начинается с 0 в JS, из VK приходит в естественной нумерации
     const year = parseInt(parts[2], 10);
 
     const date = new Date(year, month, day);
