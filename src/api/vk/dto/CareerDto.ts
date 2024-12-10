@@ -6,7 +6,8 @@ export class CareerDto {
         public city_name: string,                       // название города (если доступно, иначе city_id)
         public from: number,                            // год начала работы
         public until: number,                           // год окончания работы
-        public position: string                         // должность
+        public position: string,                        // должность
+        public requirements: string,                    // обязанности
     ) {
 
     }
