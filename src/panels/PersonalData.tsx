@@ -227,6 +227,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         onRemove={onSpecialityChange}
                                         displayValue="name"
                                         placeholder='Специальность'
+                                        hidePlaceholder={true}
                                         style={{
                                             multiselectContainer: {
                                                 color: '#494848',
@@ -237,6 +238,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                                 padding: '10px',
                                                 border: 'none',
                                                 backgroundColor: '#fff',
+                                                maxWidth: '350px',
                                             },
                                             searchBox: {
                                                 border: 'none',
@@ -261,12 +263,14 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         onRemove={onWorkFormatChange}
                                         displayValue="name"
                                         placeholder='Формат'
+                                        hidePlaceholder={true}
                                         style={{
                                             multiselectContainer: {
                                                 color: '#494848',
                                                 fontSize: '1.1em',
                                                 textAlign: 'center',
                                                 minWidth: '350px',
+                                                maxWidth: '350px',
                                                 borderRadius: '30px',
                                                 padding: '10px',
                                                 border: 'none',
