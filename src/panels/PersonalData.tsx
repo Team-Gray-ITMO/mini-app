@@ -12,6 +12,7 @@ import {UserResumeInfo} from "../models/UserResumeInfo.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {Multiselect} from "multiselect-react-dropdown";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
+import {SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -19,6 +20,8 @@ export interface ResumeProps extends NavIdProps {
 }
 
 export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {
+    const saveDataClient = new SaveDataClient();
+    
     const [userCV, setCV] = useState<CV>(null);
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
@@ -61,7 +64,17 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
     };
 
     const handleNextStepButtonClick = () => {
-        if (!userCV) return;
+        if (!userCV || id === undefined) return;
+        
+        saveDataClient.createUser(
+            new UserCreateDto(
+                userCV.email,
+                id,
+                userCV.phone,
+                userCV.dateOfBirth,
+                userCV.city,
+            )
+        )
 
         routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
     };
@@ -82,7 +95,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
             false,
             currentUser?.avatar,
             currentUser?.universities,
-            currentUser?.workExperience));
+            currentUser?.workExperience)
+        );
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
