@@ -1,6 +1,6 @@
 import {Avatar, Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
 import {CV} from "../models/CV.ts";
-import {FC, forwardRef, useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
@@ -81,7 +81,7 @@ export const EducationStage: FC<EdProps> = ({id}) => {
 
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
 
-                        {userCV.education.map(item => (
+                        {userCV.education.map((item, index) => (
                             <Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -90,7 +90,18 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                            style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
                                                border: 'none',
                                                backgroundColor: '#fff', minWidth: '400px', textAlign: 'center'}} value={item.name} readOnly={false}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           name: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -107,7 +118,18 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.faculty_name}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           faculty_name: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -124,7 +146,18 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.chair_name}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           chair_name: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -141,12 +174,23 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.education_status}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           education_status: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Год выпуска</Text>
-                                    <input name='graduate'
+                                    <input name='graduation'
                                            style={{
                                                color: '#494848',
                                                fontSize: '1.5em',
@@ -158,7 +202,18 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.graduation}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           graduation: parseInt(e.target.value, 10)
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
                                 </Div>
 
                                 <hr/>
