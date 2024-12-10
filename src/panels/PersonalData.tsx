@@ -9,12 +9,9 @@ import '../styles/personal_data.css';
 import {parseDate} from "../utils/vkApiMapping.ts";
 import {CV} from "../models/CV.ts";
 import {UserResumeInfo} from "../models/UserResumeInfo.ts";
-import {formatUniversities, formatWorkExperience} from "../utils/internalMapping.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
-import Select from "react-select/base";
 import {Multiselect} from "multiselect-react-dropdown";
-import {ResumeApiClient} from "../api/internal/client/ResumeApiClient.ts";
-import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
+import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -31,7 +28,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         ),
     );
 
-    const resumeApiClient : ResumeApiClient = new ResumeApiClient();
+    const resumeApiClient : CVApiClient = new CVApiClient();
 
     const selectState = {
         options: resumeApiClient.getSpecialities()
@@ -63,27 +60,10 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
-    const handleSubmit = async () => {
+    const handleNextStepButtonClick = () => {
         if (!userCV) return;
 
-        try {
-            const response = await fetch('https://localhost:8080/resumes/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userCV),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const data = await response.json();
-            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE);
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
     };
 
     const routeNavigator = useRouteNavigator();
@@ -101,8 +81,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
             currentUser?.city,
             false,
             currentUser?.avatar,
-            formatUniversities(currentUser?.universities),
-            formatWorkExperience(currentUser?.workExperience)));
+            currentUser?.universities,
+            currentUser?.workExperience));
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
@@ -246,7 +226,28 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         onSelect={onSpecialityChange}
                                         onRemove={onSpecialityChange}
                                         displayValue="name"
-                                        placeholder='Выберите предпочитаемую специальность'
+                                        placeholder='Специальность'
+                                        style={{
+                                            multiselectContainer: {
+                                                color: '#494848',
+                                                fontSize: '1.1em',
+                                                textAlign: 'center',
+                                                minWidth: '350px',
+                                                borderRadius: '30px',
+                                                padding: '10px',
+                                                border: 'none',
+                                                backgroundColor: '#fff',
+                                            },
+                                            searchBox: {
+                                                border: 'none',
+                                                'border-bottom': '0px solid',
+                                                color: '#fff'
+                                            },
+                                            inputField: {
+                                                color: '#fff',
+                                                textAlign: 'center'
+                                            }
+                                        }}
                                     />
                                 </Div>
 
@@ -258,7 +259,28 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         onSelect={onWorkFormatChange}
                                         onRemove={onWorkFormatChange}
                                         displayValue="name"
-                                        placeholder='Выберите формат работы'
+                                        placeholder='Формат'
+                                        style={{
+                                            multiselectContainer: {
+                                                color: '#494848',
+                                                fontSize: '1.1em',
+                                                textAlign: 'center',
+                                                minWidth: '350px',
+                                                borderRadius: '30px',
+                                                padding: '10px',
+                                                border: 'none',
+                                                backgroundColor: '#fff',
+                                            },
+                                            searchBox: {
+                                                border: 'none',
+                                                'border-bottom': '0px solid',
+                                                color: '#fff'
+                                            },
+                                            inputField: {
+                                                color: '#fff',
+                                                textAlign: 'center'
+                                            }
+                                        }}
                                     />
                                 </Div>
 
@@ -302,45 +324,6 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         onChange={onMoveChange}
                                     />
                                 </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{
-                                        color: '#fff',
-                                        fontSize: '1.5em',
-                                        margin: '10px 40px'
-                                    }}>Образование</Text>
-                                    <input name='education'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.education}
-                                           onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Опыт
-                                        работы</Text>
-                                    <input name='workExperience'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.workExperience}
-                                           onChange={handleChange}/>
-                                </Div>
                             </Div>
                         }
                     </Div>
@@ -378,7 +361,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                 boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
                                 minWidth: '320px'
                             }}
-                            onClick={handleSubmit}
+                            onClick={handleNextStepButtonClick}
                         >
                             <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Перейти к следующему этапу</Text>
                         </Button>
