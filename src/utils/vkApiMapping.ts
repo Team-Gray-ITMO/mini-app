@@ -56,10 +56,12 @@ export function mapCareers(apiData: any[]): CareerDto[] {
     return apiData.map(item => new CareerDto(
         item.group_id,
         item.company,
+        '',
         item.city_id,
         item.city_name,
         item.from,
         item.until,
-        item.position
+        item.position,
+        ''
     ));
 }

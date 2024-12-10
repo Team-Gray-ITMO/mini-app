@@ -289,7 +289,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                         рождения</Text>
                                     <DatePicker name='dateOfBirth' selected={userCV.dateOfBirth} onChange={(date) => {
                                         if (date != null) {
-                                            userCV.dateOfBirth = date;
+                                            setCV({ ...userCV, dateOfBirth: date });
                                         }
                                     }}
                                                 customInput={<ExampleCustomInput className='calendar-button'/>}
