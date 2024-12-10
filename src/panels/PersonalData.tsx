@@ -178,7 +178,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                                    style={{
                                                        color: '#494848',
                                                        fontSize: '1.5em',
-                                                       margin: '10px 40px',
+                                                       margin: '10px 20px',
                                                        borderRadius: '30px',
                                                        padding: '10px',
                                                        border: 'none',
@@ -245,7 +245,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                             },
                                             inputField: {
                                                 color: '#fff',
-                                                textAlign: 'center'
+                                                textAlign: 'center',
+                                                fontSize: '1.2em'
                                             }
                                         }}
                                     />
@@ -278,7 +279,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                             },
                                             inputField: {
                                                 color: '#fff',
-                                                textAlign: 'center'
+                                                textAlign: 'center',
+                                                fontSize: '1.2em'
                                             }
                                         }}
                                     />
