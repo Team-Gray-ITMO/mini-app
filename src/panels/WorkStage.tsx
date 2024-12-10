@@ -68,7 +68,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
 
-                        {userCV.workExperience.map(item => (
+                        {userCV.workExperience.map((item, index) => (
                             <Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -77,7 +77,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                            style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
                                                border: 'none',
                                                backgroundColor: '#fff', minWidth: '400px', textAlign: 'center'}} value={item.company} readOnly={false}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           company: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -94,7 +105,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           site: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -111,7 +133,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.position}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           position: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
@@ -128,7 +161,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={item.from}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           from: parseInt(e.target.value, 10)
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -145,7 +189,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={ item.until == null && item.from != null ? 'н.в.' : item.until}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           until: parseInt(e.target.value, 10)
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -162,7 +217,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           city_name: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
@@ -179,7 +245,18 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }}
-                                           onChange={handleChange}/>
+                                           onChange={(e) => {
+                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                   if (workIndex === index) {
+                                                       return {
+                                                           ...workItem,
+                                                           requirements: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return workItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, workExperience: updatedWorkExp});
+                                           }}/>
                                 </Div>
 
                                 <hr/>
