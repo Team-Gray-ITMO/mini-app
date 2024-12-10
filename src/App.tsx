@@ -10,11 +10,15 @@ import {PersonalData} from "./panels/PersonalData.tsx";
 import {CVPage} from "./panels/CVPage.tsx";
 import {UserResumeInfo} from "./models/UserResumeInfo.ts";
 import {mapCareers, mapUniversities} from './utils/vkApiMapping.ts';
+import {CV} from "./models/CV.ts";
+import {EducationStage} from "./panels/EducationStage.tsx";
+import {WorkStage} from "./panels/WorkStage.tsx";
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
   const [fetchedUser, setUser] = useState<UserInfo | undefined>();
   const [currentUser, setCurrentUser] = useState<UserResumeInfo | undefined>();
+  const [resultUserCV, setResultUserCV] = useState<CV | undefined>();
   const [popout, setPopout] = useState<ReactNode | null>();
 
   useEffect(() => {
@@ -71,6 +75,12 @@ export const App = () => {
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CREATE}>
             <PersonalData id="personal-data" fetchedUser={fetchedUser} currentUser={currentUser} />
+          </Panel>
+          <Panel nav={DEFAULT_VIEW_PANELS.EDUCATION}>
+            <EducationStage id='education-stage' />
+          </Panel>
+          <Panel nav={DEFAULT_VIEW_PANELS.WORK}>
+            <WorkStage id='work-stage' />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CV_PAGE}>
             <CVPage id="cv-page"/>
