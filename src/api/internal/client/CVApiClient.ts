@@ -1,7 +1,9 @@
 import {SpecialityDto} from "../dto/SpecialityDto.ts";
 import {WorkFormatDto} from "../dto/WorkFormatDto.ts";
+import {CV} from "../../../models/CV.ts";
+import {DEFAULT_VIEW_PANELS_PATHS} from "../../../routes.ts";
 
-export class ResumeApiClient {
+export class CVApiClient {
 
     public getSpecialities() : SpecialityDto[] {
 
@@ -47,6 +49,26 @@ export class ResumeApiClient {
         ];
 
         return result;
+    }
+
+    public async saveCV(cv: CV) : Promise<void> {
+        try {
+            const response = await fetch('https://localhost:8080/resumes/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cv),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
 }
