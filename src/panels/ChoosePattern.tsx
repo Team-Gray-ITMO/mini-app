@@ -21,14 +21,17 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
     
     const getPatterns = async () => {
         const allTemplates = "http://localhost:8080/api/v1/template"
+      // TODO: Test data. Remove when frontend -> backend interaction will be established
+        const defaultTestPatterns = [new Pattern(1, "Шаблон 1", ""), new Pattern(2, "Шаблон 2", ""), new Pattern(3, "Шаблон 3", "")]
         axios.get(allTemplates).then((response) => {
             const patterns = response.data
+            if (patterns.length == 0) {
+              setPatterns(defaultTestPatterns)
+              return
+            }
             setPatterns(patterns)
         }).catch((err) => {
-            // TODO: Test data. Remove when frontend -> backend interaction will be established
-            setPatterns(
-                [new Pattern(1, "Шаблон 1", ""), new Pattern(2, "Шаблон 2", ""), new Pattern(3, "Шаблон 3", "")]
-            )
+            setPatterns(defaultTestPatterns)
         })
     }
     

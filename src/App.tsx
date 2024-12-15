@@ -22,6 +22,9 @@ export const App = () => {
   const [popout, setPopout] = useState<ReactNode | null>();
 
   useEffect(() => {
+    // TODO: for local development only
+    setUser({id: 101, first_name: 'Ivan', 'last_name': 'Ivanov', sex: 1, city:  { id: 1, title: 'SPb' }, country: { id: 1, title: 'RUS' }, photo_100: '', photo_200: ''})
+
     async function fetchData() {
       const token = (await bridge.send('VKWebAppGetAuthToken', {
         app_id: 52383323,

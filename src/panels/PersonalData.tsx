@@ -12,7 +12,9 @@ import {UserResumeInfo} from "../models/UserResumeInfo.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {Multiselect} from "multiselect-react-dropdown";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
-import {SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {ResumeCreateDto, SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
+import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -20,9 +22,10 @@ export interface ResumeProps extends NavIdProps {
 }
 
 export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {
-    const saveDataClient = new SaveDataClient();
+    const saveDataClient = new SaveDataClient()
     
     const [userCV, setCV] = useState<CV>(null);
+    const [resumeId, setResumeId] = useState<number>(null)
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
             <button className={className} onClick={onClick} ref={ref}>
@@ -64,22 +67,45 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
     };
 
     const handleNextStepButtonClick = () => {
-        if (!userCV || id === undefined) return;
-        
-        saveDataClient.createUser(
-            new UserCreateDto(
-                userCV.email,
-                id,
-                userCV.phone,
-                userCV.dateOfBirth,
-                userCV.city,
-            )
-        )
+        if (!userCV || fetchedUser === undefined) return;
+
+        // TODO: remove after
+        userCV.education = [new UniversityDto(
+          1, "SPb", "ITMO", 1, "FITP", 1, "test", 1, "", ""
+        )]
+
+        // TODO: remove after
+        userCV.workExperience = [new CareerDto(
+          1, "", "", 1, "", 1, 1, "", ""
+        )]
+
+        createResume()
 
         routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
     };
 
     const routeNavigator = useRouteNavigator();
+
+    const createResume = async() => {
+      if (fetchedUser === undefined) return
+
+      await saveDataClient.createUser(
+        new UserCreateDto(
+          userCV.email,
+          fetchedUser.id,
+          userCV.phone,
+          userCV.dateOfBirth,
+          userCV.city,
+        )
+      )
+
+      setResumeId(await saveDataClient.createResume(
+        new ResumeCreateDto(
+          fetchedUser?.id,
+          "Test summary"
+        )
+      ))
+    }
 
     useEffect(() => {
         console.log("Got this user info in Resume.tsx: " + JSON.stringify(currentUser, null, 2));
