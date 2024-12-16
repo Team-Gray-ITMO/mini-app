@@ -240,7 +240,7 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                 minWidth: '320px'
                             }}
                             onClick={() => {
-                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN);
+                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CREATE);
                             }}
                         >
                             <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Вернуться</Text>
