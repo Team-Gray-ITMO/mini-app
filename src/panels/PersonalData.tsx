@@ -13,14 +13,18 @@ import {ConnectionType} from "../enums/ConnectionType.ts";
 import {Multiselect} from "multiselect-react-dropdown";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {FetchDataClient, UserDto} from "../api/internal/client/FetchDataClient.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
     currentUser?: UserResumeInfo
+    currentUserCV?: CV
 }
 
-export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {
+export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, currentUserCV}) => {
     const saveDataClient = new SaveDataClient();
+    const fetchDataClient = new FetchDataClient();
     
     const [userCV, setCV] = useState<CV>(null);
     const ExampleCustomInput = forwardRef(
@@ -63,20 +67,37 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
-    const handleNextStepButtonClick = () => {
+    const handleNextStepButtonClick = async () => {
         if (!userCV || id === undefined) return;
-        
-        saveDataClient.createUser(
-            new UserCreateDto(
-                userCV.email,
-                id,
-                userCV.phone,
-                userCV.dateOfBirth,
-                userCV.city,
-            )
-        )
 
-        routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
+        let userId : number = 0;
+        let user: UserDto = null;
+
+        try {
+            user = await fetchDataClient.getUserByVkId(fetchedUser!.id);
+            userId = user.id;
+        } catch (error: any) {
+            console.error('Ошибка при получении пользователя:', error.message);
+            user = await saveDataClient.createUser(
+                new UserCreateDto(
+                    userCV.email,
+                    id,
+                    userCV.phone,
+                    userCV.dateOfBirth,
+                    userCV.city,
+                )
+            );
+
+            userId = user.id;
+        } finally {
+            console.log('Got user from internal API: ', user);
+            localStorage.setItem(StorageKeyConstants.USER_ID, String(userId));
+
+            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {
+                state: { cv: userCV },
+                keepSearchParams: true,
+            });
+        }
     };
 
     const routeNavigator = useRouteNavigator();

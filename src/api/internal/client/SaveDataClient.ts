@@ -1,4 +1,6 @@
 import axios from "axios";
+import {UserDto} from "./FetchDataClient.ts";
+import {ApiConstants} from "../constants/ApiConstants.ts";
 
 
 export class JobCreateDto {
@@ -115,15 +117,20 @@ export class SaveDataClient {
             }
         })
     }
-    
-    public createUser(user: UserCreateDto) {
-        const url = "http://localhost:8080/api/v1/user"
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                user
-            }
-        })
+
+    /**
+     * Создает пользователя
+     * @param {UserCreateDto} user - данные для создания пользователя
+     * @returns {Promise<UserDto>} - Данные созданного пользователя или ошибка
+     */
+    public async createUser(user: UserCreateDto) : Promise<UserDto> {
+        try {
+            const response = await axios.post<UserDto>(`${ApiConstants.USER_BASE_URL}`, user);
+            return response.data; // Данные созданного пользователя
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при создании пользователя'
+            );
+        }
     }
 }
