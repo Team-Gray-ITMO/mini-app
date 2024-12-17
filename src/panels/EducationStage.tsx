@@ -5,6 +5,7 @@ import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {createNewUniversity} from "../utils/internalMapping.ts";
 
 export interface EdProps extends NavIdProps {
     id: string;
@@ -50,6 +51,23 @@ export const EducationStage: FC<EdProps> = ({id}) => {
         setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
+    const handleAddEducation = () => {
+
+        const updatedEducation = userCV.education;
+        updatedEducation.push(createNewUniversity());
+
+        setCV({...userCV, education: updatedEducation});
+    };
+
+    const handleDeleteEducation = (index : number) => {
+        const updatedEducation = userCV.education;
+        if (index >= 0 && index < updatedEducation.length) {
+            updatedEducation.splice(index, 1);
+        }
+
+        setCV({...userCV, education: updatedEducation});
+    };
+
     const handleSubmit = async () => {
         if (!userCV) return;
 
@@ -82,7 +100,36 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
 
                         {userCV.education.map((item, index) => (
+
                             <Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город</Text>
+                                    <input name='city'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               border: 'none',
+                                               padding: '10px',
+                                               backgroundColor: '#fff',
+                                               minWidth: '400px',
+                                               textAlign: 'center'
+                                           }} value={item.city}
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           city: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
+                                </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Наименование</Text>
@@ -189,6 +236,34 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Форма обучения</Text>
+                                    <input name='education_form'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '400px',
+                                               textAlign: 'center'
+                                           }} value={item.education_form}
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           education_form: e.target.value // обновляем только поле name
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Год выпуска</Text>
                                     <input name='graduation'
                                            style={{
@@ -216,6 +291,24 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                            }}/>
                                 </Div>
 
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Button
+                                        size='s'
+                                        style={{
+                                            backgroundColor: 'white',
+                                            borderRadius: '15px',
+                                            color: 'black',
+                                            height: '80px',
+                                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                                            minWidth: '320px',
+                                            margin: '0 auto'
+                                        }}
+                                        onClick={() => handleDeleteEducation(index)}
+                                    >
+                                        <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Убрать место работы</Text>
+                                    </Button>
+                                </Div>
+
                                 <hr/>
 
                             </Div>
@@ -229,6 +322,20 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                         margin: '30px 0',
                         gap: '50px'
                     }}>
+                        <Button
+                            size='l'
+                            style={{
+                                backgroundColor: 'white',
+                                borderRadius: '15px',
+                                color: 'black',
+                                height: '80px',
+                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                                minWidth: '320px'
+                            }}
+                            onClick={handleAddEducation}
+                        >
+                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Добавить место обучения</Text>
+                        </Button>
                         <Button
                             size='l'
                             style={{

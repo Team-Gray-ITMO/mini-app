@@ -13,6 +13,8 @@ import {mapCareers, mapUniversities} from './utils/vkApiMapping.ts';
 import {CV} from "./models/CV.ts";
 import {EducationStage} from "./panels/EducationStage.tsx";
 import {WorkStage} from "./panels/WorkStage.tsx";
+import axios from "axios";
+import {ApiConstants} from "./api/internal/constants/ApiConstants.ts";
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
@@ -57,6 +59,8 @@ export const App = () => {
       console.log(resumeInfo);
 
       setUser(user);
+      axios.defaults.headers.common['X-Vk-Id'] = fetchedUser!.id;
+      axios.defaults.headers.common['X-Client-Id'] = ApiConstants.API_KEY;
       setCurrentUser(resumeInfo);
       setPopout(null);
     }
