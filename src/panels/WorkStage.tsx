@@ -71,7 +71,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
         try {
 
-            const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(parseInt(userId!), userCV.summary));
+            const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(userCV.summary));
             const resumeId = savedResume.id;
 
             for (let i = 0; i < userCV.education.length; i++) {

@@ -104,34 +104,6 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                             <Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город</Text>
-                                    <input name='city'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               border: 'none',
-                                               padding: '10px',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={item.city}
-                                           onChange={(e) => {
-                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
-                                                   if (eduIndex === index) {
-                                                       return {
-                                                           ...eduItem,
-                                                           city: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return eduItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, education: updatedEducation});
-                                           }}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Наименование</Text>
                                     <input name='name'
                                            style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',

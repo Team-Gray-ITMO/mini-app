@@ -93,7 +93,23 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             ])
     };
 
-    addTestData();
+    const init = ()=> {
+        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email,
+            ConnectionType.PHONE,
+            [],
+            [],
+            parseDate(currentUser?.dateOfBirth),
+            currentUser?.city,
+            false,
+            currentUser?.avatar,
+            currentUser?.universities,
+            currentUser?.workExperience,
+            '',
+            fetchedUser?.id)
+        );
+    };
+
+    //addTestData();
 
     const handleNextStepButtonClick = async () => {
         if (!userCV || id === undefined) return;
@@ -144,21 +160,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         console.log(currentUser?.universities);
         console.log(currentUser?.workExperience)
 
-        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email,
-            ConnectionType.PHONE,
-            [],
-            [],
-            parseDate(currentUser?.dateOfBirth),
-            currentUser?.city,
-            false,
-            currentUser?.avatar,
-            currentUser?.universities,
-            currentUser?.workExperience,
-            '',
-            fetchedUser?.id)
-        );
-
-        addTestData();
+        init();
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');

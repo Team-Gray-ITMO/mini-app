@@ -71,8 +71,7 @@ export class UserCreateDto {
 
 export class ResumeCreateDto {
     constructor(
-        public userId: number,
-        public summary: string,
+        public summary: string
     ) {
     }
 }
@@ -224,6 +223,7 @@ export class SaveDataClient {
 
     /**
      * Создает пользователя
+     * @param vkId
      * @param {UserCreateDto} user - данные для создания пользователя
      * @returns {Promise<UserDto>} - Данные созданного пользователя или ошибка
      */
@@ -231,6 +231,7 @@ export class SaveDataClient {
         try {
             const headers = {
                 'X-Client-Id': ApiConstants.API_KEY,
+                'X-Vk-Id': vkId,
             };
 
             const response = await axios.post<UserDto>(`${ApiConstants.USER_BASE_URL}`, user, {
@@ -246,6 +247,7 @@ export class SaveDataClient {
 
     /**
      * Создает резюме пользователя
+     * @param vkId
      * @param {ResumeCreateDto} resume - данные для создания пользователя
      * @returns {Promise<ResumeDto>} - Данные созданного пользователя или ошибка
      */
