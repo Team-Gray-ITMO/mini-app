@@ -76,12 +76,21 @@ export class ResumeCreateDto {
     }
 }
 
+export class ResumeUpdateDto {
+  constructor(
+    public id: number,
+    public summary: string,
+    public templateId: number
+  ) {
+  }
+}
+
 export class SaveDataClient {
     
     public addCertification() {
         
         
-        const url = "http://localhost:8080/api/v1/certification"
+        const url = `${ApiConstants.BASE_URL}/api/v1/certification`
         axios({
             method: 'post',
             url: url,
@@ -93,7 +102,7 @@ export class SaveDataClient {
     }
     
     public addJob(job: JobCreateDto) {
-        const url = "http://localhost:8080/api/v1/job"
+        const url = `${ApiConstants.BASE_URL}/api/v1/job`
         axios({
             method: 'post',
             url: url,
@@ -200,7 +209,7 @@ export class SaveDataClient {
     }
     
     public addSkill(skill: SkillCreateDto) {
-        const url = "http://localhost:8080/api/v1/skill"
+        const url = `${ApiConstants.BASE_URL}/api/v1/skill`
         axios({
             method: 'post',
             url: url,
@@ -211,7 +220,7 @@ export class SaveDataClient {
     }
     
     public addLanguage(language: LanguageCreateDto) {
-        const url = "http://localhost:8080/api/v1/language"
+        const url = `${ApiConstants.BASE_URL}/api/v1/language`
         axios({
             method: 'post',
             url: url,
@@ -272,5 +281,21 @@ export class SaveDataClient {
                 error.response?.data?.message || 'Произошла ошибка при создании резюме'
             );
         }
+    }
+
+    public async updateResume(resume: ResumeUpdateDto) : Promise<ResumeDto> {
+      if (!resume) {
+        throw new Error('Данные для создания резюме не переданы');
+      }
+      console.log('Перед обновлением:', resume);
+
+      try {
+        const response = await axios.put<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume);
+        return response.data; // Данные созданного пользователя
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.message || 'Произошла ошибка при создании резюме'
+        );
+      }
     }
 }
