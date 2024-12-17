@@ -7,25 +7,25 @@ import {
 import {useEffect, useState} from "react";
 import {useMetaParams, useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
-import html2pdf from "html2pdf.js";
-import { saveAs } from 'file-saver';
-import HTMLtoDOCX from 'html-to-docx';
 import {InProcess} from "./InProcess.tsx";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
 import {CV} from "../models/CV.ts";
+import axios from "axios";
 
 export const CVPage = ({id}) => {
 
     const fetchDataClient = new FetchDataClient();
     const routeNavigator = useRouteNavigator();
-    const {id: resumeId} = useParams();
+
+    const params = useParams<'id'>();
+
     const grade = 4.2;
     const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const params = useMetaParams<{cv: CV}>();
-    const [userCV, setCV] = useState<CV>(params?.cv);
+    const cvParams = useMetaParams<{cv: CV}>();
+    const [userCV, setCV] = useState<CV>(cvParams?.cv);
 
     useEffect(() => {
         setAdvices([
@@ -48,54 +48,63 @@ export const CVPage = ({id}) => {
         };
 
         fetchResumeData();
-    }, [resumeId]);
+    }, [id]);
 
     useEffect(() => {
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
         document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
     }, []);
 
-    const htmlString = `
-        <div>
-          <h1 style="font-size: 40px">Резюме по шаблону</h1>
-          <h3 style="font-size: 25px">Александр Александров</h3>
-          <p style="font-size: 20px">Опыт работы</p>
-          <div style="margin-left: 20px">
-           <p><b>ВК 02.2020 – настоящее время</b></p>
-           <p>Разрабатывал новостную ленту</p>
-          </div>  
-        </div>
-      `;
-
     const exportAsPdf = () => {
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlString;
-      document.body.appendChild(tempDiv);
+      if (params === undefined) {
+        return
+      }
+      const resumeId = params.id;
 
-      html2pdf().from(tempDiv).set({
-        margin: 0,
-        filename: 'CV.pdf',
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      }).save()
-
-      document.body.removeChild(tempDiv);
+      const url = `http://localhost:8080/api/v1/resume/${resumeId}/pdf`
+      axios.get(url, {
+        responseType: 'blob'
+      }).then((response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `resume_${resumeId}.pdf`;
+        link.click();
+      })
     }
 
     const exportAsHtml = () => {
-      const blob = new Blob([htmlString], { type: 'text/plain' });
-      saveAs(blob, 'CV.txt');
+      if (params === undefined) {
+        return
+      }
+      const resumeId = params.id;
+
+      const url = `http://localhost:8080/api/v1/resume/${resumeId}/html`
+      axios.get(url).then((response) => {
+        const blob = new Blob([response.data], { type: 'application/octet-stream' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `resume_${resumeId}.html`;
+        link.click();
+      })
     }
 
     const exportAsWord = async () => {
-      const fileBuffer = await HTMLtoDOCX(htmlString, null, {
-        table: { row: { cantSplit: true } },
-        footer: true,
-        pageNumber: true,
-      });
+      if (params === undefined) {
+        return
+      }
+      const resumeId = params.id;
 
-      const blob = new Blob([fileBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-      saveAs(blob, 'CV.docx');
+      const url = `http://localhost:8080/api/v1/resume/${resumeId}/docx`
+      axios.get(url, {
+        responseType: 'blob'
+      }).then((response) => {
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `resume_${resumeId}.docx`;
+        link.click();
+      })
     }
 
     if (loading) {
