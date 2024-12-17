@@ -189,4 +189,26 @@ export class FetchDataClient {
         }
     }
 
+    public async getTemplates(vkId : number) : Promise<TemplateBaseDto[]> {
+      try {
+        const headers = {
+          'X-Vk-Id': vkId,
+          'X-Client-Id': ApiConstants.API_KEY,
+        };
+
+        const response = await axios.get<TemplateBaseDto[]>(`${ApiConstants.TEMPLATE_BASE_URL}`, {
+          headers
+        });
+
+        console.log(response);
+
+        return response.data;
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          throw new Error('Шаблон с указанным ID не найдено');
+        } else {
+          throw new Error('Произошла ошибка при получении данных');
+        }
+      }
+    }
 }
