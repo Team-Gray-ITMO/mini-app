@@ -26,10 +26,13 @@ export const ChoosePattern: FC<ChoosePatternProps> = ({ id, fetchedUser }) => {
     }
 
     useEffect(() => {
+        if (fetchedUser !== undefined) {
+          getPatterns()
+        }
+
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
         document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
-        getPatterns()
-    }, []);
+    }, [fetchedUser]);
     
     const handleClick = (id) => {
         localStorage.setItem(StorageKeyConstants.TEMPLATE_ID, String(id));

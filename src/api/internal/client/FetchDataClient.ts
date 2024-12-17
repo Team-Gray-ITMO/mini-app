@@ -1,6 +1,6 @@
 import axios from "axios";
 import {ApiConstants} from "../constants/ApiConstants.ts";
-import {CV} from "../../../models/CV.ts";
+import {CVHistory} from "../../../panels/Home.tsx";
 
 export class UserDto {
     constructor(
@@ -213,18 +213,21 @@ export class FetchDataClient {
       }
     }
 
-  public async getHistory(vkId : number) : Promise<CV[]> {
+  public async getHistory(vkId : number) : Promise<CVHistory[]> {
     try {
       const headers = {
         'X-Vk-Id': vkId,
         'X-Client-Id': ApiConstants.API_KEY,
       };
 
-      const response = await axios.get<CV[]>(`${ApiConstants.RESUME_BASE_URL}`, {
+      const response = await axios.get(`${ApiConstants.RESUME_BASE_URL}`, {
         headers
       });
 
-      return response.data;
+      return response.data.map((item) => {
+        console.log("CV item: ", item)
+        return new CVHistory(item.id, item.summary, this.formatDate(item.createdAt))
+      });
     } catch (error) {
       if (error.response && error.response.status === 404) {
         throw new Error('Истории не найдено');
@@ -232,5 +235,76 @@ export class FetchDataClient {
         throw new Error('Произошла ошибка при получении данных');
       }
     }
+  }
+
+  public async getResumeAsPdf(resumeId: number, vkId : number) : Promise<void> {
+    const headers = {
+      'X-Vk-Id': vkId,
+      'X-Client-Id': ApiConstants.API_KEY,
+    };
+
+    const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/pdf`
+    axios.get(url, {
+      headers: headers,
+      responseType: 'blob'
+    }).then((response) => {
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `resume_${resumeId}.pdf`;
+      link.click();
+    })
+  }
+
+  public async getResumeAsHtml(resumeId: number, vkId : number) : Promise<void> {
+    const headers = {
+      'X-Vk-Id': vkId,
+      'X-Client-Id': ApiConstants.API_KEY,
+    };
+
+    const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/html`
+    axios.get(url, {
+        headers
+      }
+    ).then((response) => {
+      const blob = new Blob([response.data], { type: 'application/octet-stream' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `resume_${resumeId}.html`;
+      link.click();
+    })
+  }
+
+  public async getResumeAsDocx(resumeId: number, vkId : number) : Promise<void> {
+      const headers = {
+        'X-Vk-Id': vkId,
+        'X-Client-Id': ApiConstants.API_KEY,
+      }
+
+    const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/docx`
+    axios.get(url, {
+      responseType: 'blob',
+      headers: headers,
+    }).then((response) => {
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `resume_${resumeId}.docx`;
+      link.click();
+    })
+  }
+
+  private formatDate(inputDate: string) {
+    const date = new Date(inputDate);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
   }
 }
