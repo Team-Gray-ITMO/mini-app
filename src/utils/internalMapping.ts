@@ -30,3 +30,11 @@ export function formatWorkExperience(workExperiences: CareerDto[]): string {
         return `${company} - ${position} (${startDate} - ${endDate})`;
     }).join('\n');
 }
+
+export function createNewUniversity() : UniversityDto {
+    return new UniversityDto();
+}
+
+export function createNewWorkExperience() : CareerDto {
+    return new CareerDto();
+}
