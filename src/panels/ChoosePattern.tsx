@@ -5,8 +5,13 @@ import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import "../styles/ChoosePattern.css";
 import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {FetchDataClient, TemplateBaseDto} from "../api/internal/client/FetchDataClient.ts";
+import {UserInfo} from "@vkontakte/vk-bridge";
 
-export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
+export interface ChoosePatternProps extends NavIdProps {
+  fetchedUser?: UserInfo;
+}
+
+export const ChoosePattern: FC<ChoosePatternProps> = ({ id, fetchedUser }) => {
     const fetchDataClient = new FetchDataClient();
 
     const [selectedPattern, setSelectedPattern] = useState<number | undefined>(null);
@@ -16,9 +21,7 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
 
     
     const getPatterns = async () => {
-        const userId = parseInt(localStorage.getItem(StorageKeyConstants.USER_ID)!)
-
-        const templates = await fetchDataClient.getTemplates(userId)
+        const templates = await fetchDataClient.getTemplates(fetchedUser!.id)
         setPatterns(templates)
     }
 
