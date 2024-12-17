@@ -11,6 +11,8 @@ import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/Home.css'
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
+import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -37,6 +39,7 @@ class UserData {
 
 export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
+  const fetchDataClient = new FetchDataClient();
 
   const [CVs, setCVs] = useState<CV[]>([]);
   const [userData, setUserData] = useState<UserData>(null);
@@ -46,15 +49,15 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
      // setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
       const fetchResumes = async () => {
+        const userId = parseInt(localStorage.getItem(StorageKeyConstants.USER_ID)!)
+
         try {
-          const response = await fetch(ApiConstants.RESUME_BASE_URL);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          console.log(data)
-          const fetchedCVs = data.map((item) => new CV(item.id, item.summary, formatDate(item.createdAt)));
-          setCVs(fetchedCVs);
+          const response = await fetchDataClient.getHistory(userId)
+
+          console.log(response)
+
+        //  const fetchedCVs = data.map((item) => new CV(item.id, item.summary, formatDate(item.createdAt)));
+          setCVs(response);
         } catch (error) {
           console.error('Failed to fetch resumes:', error);
         }

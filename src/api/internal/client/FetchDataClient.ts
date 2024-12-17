@@ -1,5 +1,6 @@
 import axios from "axios";
 import {ApiConstants} from "../constants/ApiConstants.ts";
+import {CV} from "../../../models/CV.ts";
 
 export class UserDto {
     constructor(
@@ -211,4 +212,25 @@ export class FetchDataClient {
         }
       }
     }
+
+  public async getHistory(vkId : number) : Promise<CV[]> {
+    try {
+      const headers = {
+        'X-Vk-Id': vkId,
+        'X-Client-Id': ApiConstants.API_KEY,
+      };
+
+      const response = await axios.get<CV[]>(`${ApiConstants.RESUME_BASE_URL}`, {
+        headers
+      });
+
+      return response.data;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        throw new Error('Истории не найдено');
+      } else {
+        throw new Error('Произошла ошибка при получении данных');
+      }
+    }
+  }
 }
