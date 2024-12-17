@@ -71,15 +71,13 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
     const handleSubmit = async () => {
         if (!userCV) return;
-
-        const userId = localStorage.getItem(StorageKeyConstants.USER_ID);
         const templateId = localStorage.getItem(StorageKeyConstants.TEMPLATE_ID)
 
         try {
 
             const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(userCV.summary));
             const resumeId = savedResume.id;
-            await saveDataClient.updateResume(parseInt(userId!), new ResumeUpdateDto(savedResume.id, savedResume.summary, parseInt(templateId!)));
+            await saveDataClient.updateResume(userCV.vkId, new ResumeUpdateDto(savedResume.id, savedResume.summary, parseInt(templateId!)));
 
             for (let i = 0; i < userCV.education.length; i++) {
                 const educationItem=  userCV.education[i];
