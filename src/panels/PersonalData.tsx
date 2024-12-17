@@ -106,26 +106,33 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             userId = user.id;
         } catch (error: any) {
             console.error('Ошибка при получении пользователя:', error.message);
-            user = await saveDataClient.createUser(
-                userCV.vkId,
-                new UserCreateDto(
-                    userCV.email,
-                    String(fetchedUser!.id),
-                    userCV.phone,
-                    userCV.dateOfBirth,
-                    userCV.city,
-                )
-            );
+            console.log("Попытка создать нового пользователя");
 
-            userId = user.id;
-        } finally {
-            console.log('Got user from internal API: ', user);
-            localStorage.setItem(StorageKeyConstants.USER_ID, String(userId));
+            try {
+                user = await saveDataClient.createUser(
+                    userCV.vkId,
+                    new UserCreateDto(
+                        userCV.email,
+                        String(fetchedUser!.id),
+                        userCV.phone,
+                        userCV.dateOfBirth,
+                        userCV.city,
+                    )
+                );
+                userId = user.id;
 
-            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {
-                state: { cv: userCV },
-                keepSearchParams: true,
-            });
+                console.log('Got user from internal API: ', user);
+                if (userId != null) {
+                    localStorage.setItem(StorageKeyConstants.USER_ID, String(userId));
+
+                    routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {
+                        state: { cv: userCV },
+                        keepSearchParams: true,
+                    });
+                }
+            } catch (error: any) {
+                console.error('Ошибка сервера: ', error.message);
+            }
         }
     };
 

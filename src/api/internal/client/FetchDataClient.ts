@@ -165,4 +165,30 @@ export class FetchDataClient {
         }
     }
 
+    /**
+     * Получить резюме по ID
+     * @param {number} vkId - Идентификатор VK
+     * @param {number} resumeId - Идентификатор резюме
+     * @returns {Promise<ResumeDto>} - Данные резюме или ошибка
+     */
+    public async getResumeById(vkId : number, resumeId : number) : Promise<ResumeDto> {
+        try {
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.get<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}/${resumeId}`, {
+                headers
+            });
+            return response.data; // Данные пользователя
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                throw new Error('Резюме с указанным ID не найдено');
+            } else {
+                throw new Error('Произошла ошибка при получении данных');
+            }
+        }
+    }
+
 }

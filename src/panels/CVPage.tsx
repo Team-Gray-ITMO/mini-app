@@ -5,12 +5,16 @@ import {
     List, Text, Image
 } from '@vkontakte/vkui';
 import {useEffect, useState} from "react";
-import {useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {useMetaParams, useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import {InProcess} from "./InProcess.tsx";
+import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
+import {CV} from "../models/CV.ts";
 import axios from "axios";
 
 export const CVPage = ({id}) => {
+
+    const fetchDataClient = new FetchDataClient();
     const routeNavigator = useRouteNavigator();
 
     const params = useParams<'id'>();
@@ -19,6 +23,9 @@ export const CVPage = ({id}) => {
     const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const cvParams = useMetaParams<{cv: CV}>();
+    const [userCV, setCV] = useState<CV>(cvParams?.cv);
 
     useEffect(() => {
         setAdvices([
@@ -31,12 +38,8 @@ export const CVPage = ({id}) => {
     useEffect(() => {
         const fetchResumeData = async () => {
             try {
-                const response = await fetch(`https://localhost:8080/resumes/${id}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                console.log(data)
+                const fetchedResume = await fetchDataClient.getResumeById(userCV.vkId, resumeId);
+                console.log(fetchedResume)
             } catch (error) {
                 console.error("Ошибка при загрузке резюме:", error);
             } finally {
