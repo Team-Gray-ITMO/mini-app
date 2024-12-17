@@ -17,7 +17,8 @@ export class CV {
         public isReadyToMove: boolean,
         public avatar: string,
         public education: UniversityDto[],
-        public workExperience: CareerDto[]
+        public workExperience: CareerDto[],
+        public summary: string
     ) {
     }
 }

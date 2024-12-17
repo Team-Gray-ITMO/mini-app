@@ -1,6 +1,6 @@
 import {FC, forwardRef, useEffect, useState} from 'react';
 import {Avatar, Button, Div, Image, NavIdProps, Panel, Text,} from '@vkontakte/vkui';
-import {UserInfo} from '@vkontakte/vk-bridge';
+import vkBridge, {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import DatePicker from "react-datepicker";
@@ -13,14 +13,20 @@ import {ConnectionType} from "../enums/ConnectionType.ts";
 import {Multiselect} from "multiselect-react-dropdown";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {FetchDataClient, UserDto} from "../api/internal/client/FetchDataClient.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
+import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
+import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
     currentUser?: UserResumeInfo
+    currentUserCV?: CV
 }
 
-export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) => {
+export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, currentUserCV}) => {
     const saveDataClient = new SaveDataClient();
+    const fetchDataClient = new FetchDataClient();
     
     const [userCV, setCV] = useState<CV>(null);
     const ExampleCustomInput = forwardRef(
@@ -63,20 +69,63 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
         setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
-    const handleNextStepButtonClick = () => {
-        if (!userCV || id === undefined) return;
-        
-        saveDataClient.createUser(
-            new UserCreateDto(
-                userCV.email,
-                id,
-                userCV.phone,
-                userCV.dateOfBirth,
-                userCV.city,
-            )
-        )
+    const addTestData = ()=> {
+        fetchedUser = {
+            bdate: "",
+            city: {id: 0, title: ""},
+            country: {id: 0, title: ""},
+            first_name: "",
+            last_name: "",
+            photo_100: "",
+            photo_200: "",
+            photo_max_orig: "",
+            sex: undefined,
+            timezone: 0,
+            id: 1
+        };
 
-        routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
+        currentUser = new UserResumeInfo('Владимир Лиджигоряев', '+743434', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
+            [
+                new UniversityDto(1, 'SPB', 'ITMO', 1, 'IPKN', 1, 'DWS', 2026, 'Очное', 'Master')
+            ],
+            [
+                new CareerDto(1, 'COMPANY', 'site.com', 1, 'SPB', 2022, 2024, 'Developer', 'CRUDOSHLEP')
+            ])
+    };
+
+    addTestData();
+
+    const handleNextStepButtonClick = async () => {
+        if (!userCV || id === undefined) return;
+
+        let userId : number = 0;
+        let user: UserDto = null;
+
+        try {
+            user = await fetchDataClient.getUserByVkId(fetchedUser!.id);
+            userId = user.id;
+        } catch (error: any) {
+            console.error('Ошибка при получении пользователя:', error.message);
+            user = await saveDataClient.createUser(
+                new UserCreateDto(
+                    userCV.email,
+                    String(fetchedUser!.id),
+                    userCV.phone,
+                    userCV.dateOfBirth,
+                    userCV.city,
+                )
+            );
+
+            userId = user.id;
+        } finally {
+            console.log('Got user from internal API: ', user);
+            localStorage.setItem(StorageKeyConstants.USER_ID, String(userId));
+
+            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {
+                state: { cv: userCV },
+                keepSearchParams: true,
+            });
+        }
     };
 
     const routeNavigator = useRouteNavigator();
@@ -95,8 +144,11 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
             false,
             currentUser?.avatar,
             currentUser?.universities,
-            currentUser?.workExperience)
+            currentUser?.workExperience,
+            '')
         );
+
+        addTestData();
 
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
@@ -331,6 +383,23 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser}) =>
                                                minWidth: '400px',
                                                textAlign: 'center'
                                            }} value={userCV.city}
+                                           onChange={handleChange}/>
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>О себе</Text>
+                                    <input name='summary'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '400px',
+                                               textAlign: 'center'
+                                           }} value={userCV.summary}
                                            onChange={handleChange}/>
                                 </Div>
 

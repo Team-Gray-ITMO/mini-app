@@ -2,15 +2,25 @@ import {Avatar, Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vk
 import {CV} from "../models/CV.ts";
 import {FC, useEffect, useState} from "react";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
-import {ConnectionType} from "../enums/ConnectionType.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {createNewUniversity, createNewWorkExperience} from "../utils/internalMapping.ts";
+import {ResumeCreateDto, SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
+import {EducationMapper} from "../api/internal/mapper/EducationMapper.ts";
+import {JobMapper} from "../api/internal/mapper/JobMapper.ts";
 
 export interface WorkProps extends NavIdProps {
     id: string;
 }
 
 export const WorkStage: FC<WorkProps> = ({id}) => {
+    const saveDataClient = new SaveDataClient();
+    const fetchDataClient = new FetchDataClient();
+    const educationMapper = new EducationMapper();
+    const jobMapper = new JobMapper();
+
     const params = useMetaParams<{cv: CV}>();
     const [userCV, setCV] = useState<CV>(params?.cv);
 
@@ -37,10 +47,63 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
         setCV({ ...userCV, [name]: value });
     };
 
+    const handleAddWork = () => {
+
+        const updatedWorkExperience = userCV.workExperience;
+        updatedWorkExperience.push(createNewWorkExperience());
+
+        setCV({...userCV, workExperience: updatedWorkExperience});
+    };
+
+    const handleDeleteWork = (index : number) => {
+        const updatedWorkExperience = userCV.workExperience;
+        if (index >= 0 && index < updatedWorkExperience.length) {
+            updatedWorkExperience.splice(index, 1);
+        }
+
+        setCV({...userCV, workExperience: updatedWorkExperience});
+    };
+
     const handleSubmit = async () => {
         if (!userCV) return;
 
-        routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE, {id: '1'}, {state: {cv: userCV}, keepSearchParams: true});
+        const userId = localStorage.getItem(StorageKeyConstants.USER_ID);
+
+        try {
+
+            const savedResume = await saveDataClient.createResume(new ResumeCreateDto(parseInt(userId!), userCV.summary));
+            const resumeId = savedResume.id;
+
+            for (let i = 0; i < userCV.education.length; i++) {
+                const educationItem=  userCV.education[i];
+                const educationInstitution = await saveDataClient.createEducationIntitution(
+                    educationMapper.universityDtoToEducationInsitutionCreateDto(educationItem)
+                );
+                const savedEducationItem = await saveDataClient.addEducation(
+                    educationMapper.universityDtoToEducationCreateDto(educationItem, educationInstitution.id, resumeId)
+                );
+
+                console.log(`Saved ${i + 1} education item: `, savedEducationItem);
+            }
+
+            for (let i = 0; i < userCV.workExperience.length; i++) {
+                const workItem = userCV.workExperience[i];
+                const company = await saveDataClient.createCompany(
+                    jobMapper.careerDtoToCompanyCreateDto(workItem)
+                );
+                const savedWorkItem = await saveDataClient.addWorkPlace(
+                    jobMapper.careerDtoToJobCreateDto(workItem, company.id, resumeId)
+                );
+
+                console.log(`Saved ${i + 1} work item: `, savedWorkItem);
+            }
+
+            await routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE, {id: String(resumeId)}, {state: {cv: userCV}, keepSearchParams: true});
+
+        } catch (error: any) {
+            console.error('Ошибка при создании резюме:', error.message);
+            return;
+        }
     };
 
     const routeNavigator = useRouteNavigator();
@@ -259,6 +322,24 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                            }}/>
                                 </Div>
 
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Button
+                                        size='s'
+                                        style={{
+                                            backgroundColor: 'white',
+                                            borderRadius: '15px',
+                                            color: 'black',
+                                            height: '80px',
+                                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                                            minWidth: '320px',
+                                            margin: '0 auto'
+                                        }}
+                                        onClick={() => handleDeleteWork(index)}
+                                    >
+                                        <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Убрать место работы</Text>
+                                    </Button>
+                                </Div>
+
                                 <hr/>
 
                             </Div>
@@ -272,6 +353,22 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                         margin: '30px 0',
                         gap: '50px'
                     }}>
+
+                        <Button
+                            size='l'
+                            style={{
+                                backgroundColor: 'white',
+                                borderRadius: '15px',
+                                color: 'black',
+                                height: '80px',
+                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
+                                minWidth: '320px'
+                            }}
+                            onClick={handleAddWork}
+                        >
+                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Добавить место работы</Text>
+                        </Button>
+
                         <Button
                             size='l'
                             style={{
@@ -283,7 +380,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                 minWidth: '320px'
                             }}
                             onClick={() => {
-                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN);
+                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
                             }}
                         >
                             <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Вернуться</Text>

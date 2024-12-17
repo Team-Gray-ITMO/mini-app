@@ -1,5 +1,12 @@
 import axios from "axios";
+import {CompanyDto, EducationDto, EducationInstitutionDto, JobDto, ResumeDto, UserDto} from "./FetchDataClient.ts";
+import {ApiConstants} from "../constants/ApiConstants.ts";
 
+export class CompanyCreateDto {
+    constructor(
+        public name : string
+    ) { }
+}
 
 export class JobCreateDto {
     constructor(
@@ -24,6 +31,12 @@ export class EducationCreateDto {
         public startDate: Date,
         public endDate: Date,
         public grade: string,
+    ) { }
+}
+
+export class EducationInstitutionCreateDto {
+    constructor(
+        public name : string
     ) { }
 }
 
@@ -56,6 +69,14 @@ export class UserCreateDto {
     }
 }
 
+export class ResumeCreateDto {
+    constructor(
+        public userId: number,
+        public summary: string,
+    ) {
+    }
+}
+
 export class SaveDataClient {
     
     public addCertification() {
@@ -82,16 +103,69 @@ export class SaveDataClient {
             }
         })
     }
-    
-    public addEducation(education: EducationCreateDto) {
-        const url = "http://localhost:8080/api/v1/job"
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                education
-            }
-        })
+
+    /**
+     * Добавляет место работы
+     * @param {EducationCreateDto} workPlace - данные для места работы
+     * @returns {Promise<EducationDto>} - Данные созданного места работы или ошибка
+     */
+    public async addWorkPlace(workPlace: JobCreateDto) : Promise<JobDto> {
+        try {
+            const response = await axios.post<JobDto>(`${ApiConstants.JOB_BASE_URL}`, workPlace);
+            return response.data; // Данные созданного пользователя
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при добавлении рабочего места'
+            );
+        }
+    }
+
+    /**
+     * Добавляет компанию
+     * @param {CompanyCreateDto} company - данные для компании
+     * @returns {Promise<EducationDto>} - Данные созданной компании или ошибка
+     */
+    public async createCompany(company: CompanyCreateDto) : Promise<CompanyDto> {
+        try {
+            const response = await axios.post<CompanyDto>(`${ApiConstants.COMPANY_BASE_URL}`, company);
+            return response.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при создании компании'
+            );
+        }
+    }
+
+    /**
+     * Добавляет обр учреждение
+     * @param {EducationInstitutionCreateDto} educationPlace - данные для учреждения
+     * @returns {Promise<EducationDto>} - Данные созданного учреждения или ошибка
+     */
+    public async createEducationIntitution(educationPlace: EducationInstitutionCreateDto) : Promise<EducationInstitutionDto> {
+        try {
+            const response = await axios.post<EducationInstitutionDto>(`${ApiConstants.EDUCATION_INSTITUTION_BASE_URL}`, educationPlace);
+            return response.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при создании образовательного учреждения'
+            );
+        }
+    }
+
+    /**
+     * Добавляет образование пользователя
+     * @param {EducationCreateDto} education - данные для образования
+     * @returns {Promise<EducationDto>} - Данные созданного места образования или ошибка
+     */
+    public async addEducation(education: EducationCreateDto) : Promise<EducationDto> {
+        try {
+            const response = await axios.post<EducationDto>(`${ApiConstants.EDUCATION_BASE_URL}`, education);
+            return response.data;
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при добавлении образования'
+            );
+        }
     }
     
     public addSkill(skill: SkillCreateDto) {
@@ -115,15 +189,41 @@ export class SaveDataClient {
             }
         })
     }
-    
-    public createUser(user: UserCreateDto) {
-        const url = "http://localhost:8080/api/v1/user"
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                user
-            }
-        })
+
+    /**
+     * Создает пользователя
+     * @param {UserCreateDto} user - данные для создания пользователя
+     * @returns {Promise<UserDto>} - Данные созданного пользователя или ошибка
+     */
+    public async createUser(user: UserCreateDto) : Promise<UserDto> {
+        try {
+            const response = await axios.post<UserDto>(`${ApiConstants.USER_BASE_URL}`, user);
+            return response.data; // Данные созданного пользователя
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при создании пользователя'
+            );
+        }
+    }
+
+    /**
+     * Создает резюме пользователя
+     * @param {ResumeCreateDto} resume - данные для создания пользователя
+     * @returns {Promise<ResumeDto>} - Данные созданного пользователя или ошибка
+     */
+    public async createResume(resume: ResumeCreateDto) : Promise<ResumeDto> {
+        if (!resume) {
+            throw new Error('Данные для создания резюме не переданы');
+        }
+        console.log('Перед отправкой:', resume);
+
+        try {
+            const response = await axios.post<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume);
+            return response.data; // Данные созданного пользователя
+        } catch (error: any) {
+            throw new Error(
+                error.response?.data?.message || 'Произошла ошибка при создании резюме'
+            );
+        }
     }
 }
