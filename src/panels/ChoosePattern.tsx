@@ -23,15 +23,18 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
         const allTemplates = "http://localhost:8080/api/v1/template"
         axios.get(allTemplates).then((response) => {
             const patterns = response.data
-            setPatterns(patterns)
-        }).catch((err) => {
-            // TODO: Test data. Remove when frontend -> backend interaction will be established
-            setPatterns(
-                [new Pattern(1, "Шаблон 1", ""), new Pattern(2, "Шаблон 2", ""), new Pattern(3, "Шаблон 3", "")]
-            )
+            const convertedPatterns: Pattern[] = []
+            console.log("Patterns: ", patterns)
+
+            patterns.forEach((pattern) => {
+                convertedPatterns.push(new Pattern(pattern.id, pattern.name, ""));
+            })
+
+            console.log("Converted patterns: ", convertedPatterns)
+            setPatterns(convertedPatterns)
         })
     }
-    
+
     useEffect(() => {
         document.documentElement.style.setProperty("--vkui--color_background", "#62a3ee");
         document.documentElement.style.setProperty("--vkui--color_background_content", "#62a3ee")
@@ -54,20 +57,20 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
                 <Div className="patterns-box">
                     {patterns.map((pattern, index) => {
                         return (
-                            <Div
-                                key={index}
-                                className={`pattern ${selectedPattern === index ? 'selected' : ''}`}
-                                onClick={() => handleClick(index)}
-                            >
-                                <Image className="pattern-image" src="/test_pattern.png"/>
-                                <Text className="pattern-name">{pattern.name}</Text>
-                            </Div>
+                          <Div
+                            key={index}
+                            className={`pattern ${selectedPattern === index ? 'selected' : ''}`}
+                            onClick={() => handleClick(index)}
+                          >
+                            <Image className="pattern-image" src="/test_pattern.png"/>
+                            <Text className="pattern-name">{pattern.name}</Text>
+                          </Div>
                         )
                     })}
                 </Div>
-                
-                <Div style={{
-                    display: "flex",
+
+              <Div style={{
+                display: "flex",
                     width: "100%",
                     justifyContent: "center",
                     margin: "30px 0",

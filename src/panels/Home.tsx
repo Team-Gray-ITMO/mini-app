@@ -41,32 +41,20 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
-    setCVs([
-      new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
-      new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
-      new CV(3, 'Резюме аналитика', '19.07.2024 12:28:31'),
-      new CV(4, 'Резюме DevOps', '17.07.2024 09:19:01')
-    ]);
     if (fetchedUser) {
       setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
       const fetchResumes = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/resumes/history/${fetchedUser.id}`);
+          const response = await fetch(`http://localhost:8080/api/v1/resume`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
-          const fetchedCVs = data.map((item) => new CV(item.id, item.name, item.creationTime));
+          console.log(data)
+          const fetchedCVs = data.map((item) => new CV(item.id, item.summary, formatDate(item.createdAt)));
           setCVs(fetchedCVs);
         } catch (error) {
-          // TODO: Test data. Remove when frontend -> backend interaction will be established
-          setCVs([
-            new CV(1, 'Резюме фронтенд разработчика', '21.07.2024 23:30:34'),
-            new CV(2, 'Резюме бэкенд разработчик', '21.07.2024 13:30:34'),
-            new CV(3, 'Резюме аналитика', '19.07.2024 12:28:31'),
-            new CV(4, 'Резюме DevOps', '17.07.2024 09:19:01')
-          ]);
           console.error('Failed to fetch resumes:', error);
         }
       };
@@ -79,6 +67,20 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
     document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
 
   }, [fetchedUser]);
+
+  function formatDate(inputDate: string) {
+    const date = new Date(inputDate);
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+  }
 
   return (
     <Panel id={id}>
