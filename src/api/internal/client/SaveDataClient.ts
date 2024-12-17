@@ -283,14 +283,21 @@ export class SaveDataClient {
         }
     }
 
-    public async updateResume(resume: ResumeUpdateDto) : Promise<ResumeDto> {
+    public async updateResume(vkId: number, resume: ResumeUpdateDto) : Promise<ResumeDto> {
       if (!resume) {
         throw new Error('Данные для создания резюме не переданы');
       }
       console.log('Перед обновлением:', resume);
 
       try {
-        const response = await axios.put<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume);
+        const headers = {
+          'X-Vk-Id': vkId,
+          'X-Client-Id': ApiConstants.API_KEY,
+        };
+
+        const response = await axios.put<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume, {
+          headers
+        });
         return response.data; // Данные созданного пользователя
       } catch (error: any) {
         throw new Error(

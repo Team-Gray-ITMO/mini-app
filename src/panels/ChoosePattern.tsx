@@ -3,10 +3,8 @@ import {FC, useEffect, useState} from "react";
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import "../styles/ChoosePattern.css";
-import axios from "axios";
 import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {FetchDataClient, TemplateBaseDto} from "../api/internal/client/FetchDataClient.ts";
-import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 
 export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
     const fetchDataClient = new FetchDataClient();
@@ -18,21 +16,10 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
 
     
     const getPatterns = async () => {
-        const allTemplates = ApiConstants.TEMPLATE_BASE_URL
         const userId = parseInt(localStorage.getItem(StorageKeyConstants.USER_ID)!)
 
-        axios.get(allTemplates).then((response) => {
-            const patterns = response.data
-            const convertedPatterns: TemplateBaseDto[] = []
-            console.log("Patterns: ", patterns)
-
-            patterns.forEach((pattern) => {
-                convertedPatterns.push(new TemplateBaseDto(pattern.id, pattern.name));
-            })
-
-            console.log("Converted patterns: ", convertedPatterns)
-            setPatterns(convertedPatterns)
-        })
+        const templates = await fetchDataClient.getTemplates(userId)
+        setPatterns(templates)
     }
 
     useEffect(() => {
