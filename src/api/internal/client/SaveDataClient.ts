@@ -230,7 +230,6 @@ export class SaveDataClient {
     public async createUser(vkId: number, user: UserCreateDto) : Promise<UserDto> {
         try {
             const headers = {
-                'X-Vk-Id': vkId,
                 'X-Client-Id': ApiConstants.API_KEY,
             };
 

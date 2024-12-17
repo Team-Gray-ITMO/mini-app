@@ -5,21 +5,27 @@ import {
     List, Text, Image
 } from '@vkontakte/vkui';
 import {useEffect, useState} from "react";
-import {useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
+import {useMetaParams, useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import html2pdf from "html2pdf.js";
 import { saveAs } from 'file-saver';
 import HTMLtoDOCX from 'html-to-docx';
 import {InProcess} from "./InProcess.tsx";
+import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
+import {CV} from "../models/CV.ts";
 
 export const CVPage = ({id}) => {
 
+    const fetchDataClient = new FetchDataClient();
     const routeNavigator = useRouteNavigator();
     const {id: resumeId} = useParams();
     const grade = 4.2;
     const experience = 42;
     const [advices, setAdvices] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const params = useMetaParams<{cv: CV}>();
+    const [userCV, setCV] = useState<CV>(params?.cv);
 
     useEffect(() => {
         setAdvices([
@@ -32,12 +38,8 @@ export const CVPage = ({id}) => {
     useEffect(() => {
         const fetchResumeData = async () => {
             try {
-                const response = await fetch(`https://localhost:8080/resumes/${resumeId}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                console.log(data)
+                const fetchedResume = await fetchDataClient.getResumeById(userCV.vkId, resumeId);
+                console.log(fetchedResume)
             } catch (error) {
                 console.error("Ошибка при загрузке резюме:", error);
             } finally {
