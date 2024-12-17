@@ -106,12 +106,20 @@ export class SaveDataClient {
 
     /**
      * Добавляет место работы
+     * @param vkId
      * @param {EducationCreateDto} workPlace - данные для места работы
      * @returns {Promise<EducationDto>} - Данные созданного места работы или ошибка
      */
-    public async addWorkPlace(workPlace: JobCreateDto) : Promise<JobDto> {
+    public async addWorkPlace(vkId: number, workPlace: JobCreateDto) : Promise<JobDto> {
         try {
-            const response = await axios.post<JobDto>(`${ApiConstants.JOB_BASE_URL}`, workPlace);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<JobDto>(`${ApiConstants.JOB_BASE_URL}`, workPlace, {
+                headers
+            });
             return response.data; // Данные созданного пользователя
         } catch (error: any) {
             throw new Error(
@@ -122,12 +130,20 @@ export class SaveDataClient {
 
     /**
      * Добавляет компанию
+     * @param vkId
      * @param {CompanyCreateDto} company - данные для компании
      * @returns {Promise<EducationDto>} - Данные созданной компании или ошибка
      */
-    public async createCompany(company: CompanyCreateDto) : Promise<CompanyDto> {
+    public async createCompany(vkId: number, company: CompanyCreateDto) : Promise<CompanyDto> {
         try {
-            const response = await axios.post<CompanyDto>(`${ApiConstants.COMPANY_BASE_URL}`, company);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<CompanyDto>(`${ApiConstants.COMPANY_BASE_URL}`, company, {
+                headers
+            });
             return response.data;
         } catch (error: any) {
             throw new Error(
@@ -138,12 +154,20 @@ export class SaveDataClient {
 
     /**
      * Добавляет обр учреждение
+     * @param vkId
      * @param {EducationInstitutionCreateDto} educationPlace - данные для учреждения
      * @returns {Promise<EducationDto>} - Данные созданного учреждения или ошибка
      */
-    public async createEducationIntitution(educationPlace: EducationInstitutionCreateDto) : Promise<EducationInstitutionDto> {
+    public async createEducationIntitution(vkId: number, educationPlace: EducationInstitutionCreateDto) : Promise<EducationInstitutionDto> {
         try {
-            const response = await axios.post<EducationInstitutionDto>(`${ApiConstants.EDUCATION_INSTITUTION_BASE_URL}`, educationPlace);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<EducationInstitutionDto>(`${ApiConstants.EDUCATION_INSTITUTION_BASE_URL}`, educationPlace, {
+                headers
+            });
             return response.data;
         } catch (error: any) {
             throw new Error(
@@ -154,12 +178,20 @@ export class SaveDataClient {
 
     /**
      * Добавляет образование пользователя
+     * @param vkId
      * @param {EducationCreateDto} education - данные для образования
      * @returns {Promise<EducationDto>} - Данные созданного места образования или ошибка
      */
-    public async addEducation(education: EducationCreateDto) : Promise<EducationDto> {
+    public async addEducation(vkId: number, education: EducationCreateDto) : Promise<EducationDto> {
         try {
-            const response = await axios.post<EducationDto>(`${ApiConstants.EDUCATION_BASE_URL}`, education);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<EducationDto>(`${ApiConstants.EDUCATION_BASE_URL}`, education, {
+                headers
+            });
             return response.data;
         } catch (error: any) {
             throw new Error(
@@ -195,9 +227,16 @@ export class SaveDataClient {
      * @param {UserCreateDto} user - данные для создания пользователя
      * @returns {Promise<UserDto>} - Данные созданного пользователя или ошибка
      */
-    public async createUser(user: UserCreateDto) : Promise<UserDto> {
+    public async createUser(vkId: number, user: UserCreateDto) : Promise<UserDto> {
         try {
-            const response = await axios.post<UserDto>(`${ApiConstants.USER_BASE_URL}`, user);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<UserDto>(`${ApiConstants.USER_BASE_URL}`, user, {
+                headers
+            });
             return response.data; // Данные созданного пользователя
         } catch (error: any) {
             throw new Error(
@@ -211,14 +250,21 @@ export class SaveDataClient {
      * @param {ResumeCreateDto} resume - данные для создания пользователя
      * @returns {Promise<ResumeDto>} - Данные созданного пользователя или ошибка
      */
-    public async createResume(resume: ResumeCreateDto) : Promise<ResumeDto> {
+    public async createResume(vkId: number, resume: ResumeCreateDto) : Promise<ResumeDto> {
         if (!resume) {
             throw new Error('Данные для создания резюме не переданы');
         }
         console.log('Перед отправкой:', resume);
 
         try {
-            const response = await axios.post<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume);
+            const headers = {
+                'X-Vk-Id': vkId,
+                'X-Client-Id': ApiConstants.API_KEY,
+            };
+
+            const response = await axios.post<ResumeDto>(`${ApiConstants.RESUME_BASE_URL}`, resume, {
+                headers
+            });
             return response.data; // Данные созданного пользователя
         } catch (error: any) {
             throw new Error(

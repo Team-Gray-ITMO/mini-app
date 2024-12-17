@@ -18,7 +18,8 @@ export class CV {
         public avatar: string,
         public education: UniversityDto[],
         public workExperience: CareerDto[],
-        public summary: string
+        public summary: string,
+        public vkId: number,
     ) {
     }
 }

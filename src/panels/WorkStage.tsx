@@ -71,15 +71,17 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
         try {
 
-            const savedResume = await saveDataClient.createResume(new ResumeCreateDto(parseInt(userId!), userCV.summary));
+            const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(parseInt(userId!), userCV.summary));
             const resumeId = savedResume.id;
 
             for (let i = 0; i < userCV.education.length; i++) {
                 const educationItem=  userCV.education[i];
                 const educationInstitution = await saveDataClient.createEducationIntitution(
+                    userCV.vkId,
                     educationMapper.universityDtoToEducationInsitutionCreateDto(educationItem)
                 );
                 const savedEducationItem = await saveDataClient.addEducation(
+                    userCV.vkId,
                     educationMapper.universityDtoToEducationCreateDto(educationItem, educationInstitution.id, resumeId)
                 );
 
@@ -89,9 +91,11 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
             for (let i = 0; i < userCV.workExperience.length; i++) {
                 const workItem = userCV.workExperience[i];
                 const company = await saveDataClient.createCompany(
+                    userCV.vkId,
                     jobMapper.careerDtoToCompanyCreateDto(workItem)
                 );
                 const savedWorkItem = await saveDataClient.addWorkPlace(
+                    userCV.vkId,
                     jobMapper.careerDtoToJobCreateDto(workItem, company.id, resumeId)
                 );
 
