@@ -1,7 +1,7 @@
 import {SpecialityDto} from "../dto/SpecialityDto.ts";
 import {WorkFormatDto} from "../dto/WorkFormatDto.ts";
 import {CV} from "../../../models/CV.ts";
-import {DEFAULT_VIEW_PANELS_PATHS} from "../../../routes.ts";
+import {ApiConstants} from "../constants/ApiConstants.ts";
 
 export class CVApiClient {
 
@@ -53,7 +53,7 @@ export class CVApiClient {
 
     public async saveCV(cv: CV) : Promise<void> {
         try {
-            const response = await fetch('https://localhost:8080/resumes/create', {
+            const response = await fetch(`https://${ApiConstants}/resumes/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

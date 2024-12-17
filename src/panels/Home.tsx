@@ -10,6 +10,7 @@ import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/Home.css'
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
+import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
@@ -41,12 +42,12 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
-    if (fetchedUser) {
-      setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
+   // if (fetchedUser) {
+     // setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
       const fetchResumes = async () => {
         try {
-          const response = await fetch(`http://localhost:8080/api/v1/resume`);
+          const response = await fetch(ApiConstants.RESUME_BASE_URL);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -60,13 +61,13 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
       };
 
       fetchResumes();
-    }
+  //  }
 
     // Set color scheme
     document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
     document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
 
-  }, [fetchedUser]);
+  }, []);
 
   function formatDate(inputDate: string) {
     const date = new Date(inputDate);
