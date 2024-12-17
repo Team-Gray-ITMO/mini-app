@@ -1,8 +1,6 @@
 import axios from "axios";
 import {ApiConstants} from "../constants/ApiConstants.ts";
 
-axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-
 export class UserDto {
     constructor(
         public id: number,

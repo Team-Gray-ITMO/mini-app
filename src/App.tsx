@@ -59,8 +59,6 @@ export const App = () => {
       console.log(resumeInfo);
 
       setUser(user);
-      axios.defaults.headers.common['X-Vk-Id'] = fetchedUser!.id;
-      axios.defaults.headers.common['X-Client-Id'] = ApiConstants.API_KEY;
       setCurrentUser(resumeInfo);
       setPopout(null);
     }

@@ -107,6 +107,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         } catch (error: any) {
             console.error('Ошибка при получении пользователя:', error.message);
             user = await saveDataClient.createUser(
+                userCV.vkId,
                 new UserCreateDto(
                     userCV.email,
                     String(fetchedUser!.id),
@@ -145,7 +146,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             currentUser?.avatar,
             currentUser?.universities,
             currentUser?.workExperience,
-            '')
+            '',
+            fetchedUser?.id)
         );
 
         addTestData();
