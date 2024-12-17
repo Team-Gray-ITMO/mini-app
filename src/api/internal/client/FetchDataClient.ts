@@ -1,5 +1,6 @@
 import axios from "axios";
 import {ApiConstants} from "../constants/ApiConstants.ts";
+import * as repl from "node:repl";
 
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
@@ -134,9 +135,7 @@ export class CertificationDto {
 export class TemplateBaseDto {
     constructor(
         public id: number,
-        public createdAt: Date,
         public name: string,
-        public filePath: string
     ) {}
 }
 
@@ -166,5 +165,4 @@ export class FetchDataClient {
             }
         }
     }
-
 }

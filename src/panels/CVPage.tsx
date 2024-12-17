@@ -9,6 +9,7 @@ import {useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import {InProcess} from "./InProcess.tsx";
 import axios from "axios";
+import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 
 export const CVPage = ({id}) => {
     const routeNavigator = useRouteNavigator();
@@ -31,7 +32,7 @@ export const CVPage = ({id}) => {
     useEffect(() => {
         const fetchResumeData = async () => {
             try {
-                const response = await fetch(`https://localhost:8080/resumes/${id}`);
+                const response = await fetch(`${ApiConstants.RESUME_BASE_URL}/${id}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -58,7 +59,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/pdf`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/pdf`
       axios.get(url, {
         responseType: 'blob'
       }).then((response) => {
@@ -76,7 +77,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/html`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/html`
       axios.get(url).then((response) => {
         const blob = new Blob([response.data], { type: 'application/octet-stream' });
         const link = document.createElement('a');
@@ -92,7 +93,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/docx`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/docx`
       axios.get(url, {
         responseType: 'blob'
       }).then((response) => {

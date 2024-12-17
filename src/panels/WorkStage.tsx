@@ -5,7 +5,12 @@ import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {createNewUniversity, createNewWorkExperience} from "../utils/internalMapping.ts";
-import {ResumeCreateDto, SaveDataClient, UserCreateDto} from "../api/internal/client/SaveDataClient.ts";
+import {
+  ResumeCreateDto,
+  ResumeUpdateDto,
+  SaveDataClient,
+  UserCreateDto
+} from "../api/internal/client/SaveDataClient.ts";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
 import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {EducationMapper} from "../api/internal/mapper/EducationMapper.ts";
@@ -68,11 +73,13 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
         if (!userCV) return;
 
         const userId = localStorage.getItem(StorageKeyConstants.USER_ID);
+        const templateId = localStorage.getItem(StorageKeyConstants.TEMPLATE_ID)
 
         try {
 
             const savedResume = await saveDataClient.createResume(new ResumeCreateDto(parseInt(userId!), userCV.summary));
             const resumeId = savedResume.id;
+            await saveDataClient.updateResume(new ResumeUpdateDto(savedResume.id, savedResume.summary, parseInt(templateId!)));
 
             for (let i = 0; i < userCV.education.length; i++) {
                 const educationItem=  userCV.education[i];

@@ -4,30 +4,30 @@ import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import "../styles/ChoosePattern.css";
 import axios from "axios";
-
-export class Pattern {
-    constructor(
-        public id : number,
-        public name: string,
-        public content: string
-    ) { }
-}
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
+import {FetchDataClient, TemplateBaseDto} from "../api/internal/client/FetchDataClient.ts";
+import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 
 export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
+    const fetchDataClient = new FetchDataClient();
+
     const [selectedPattern, setSelectedPattern] = useState<number | undefined>(null);
-    const [patterns, setPatterns] = useState<Pattern[]>([])
+    const [patterns, setPatterns] = useState<TemplateBaseDto[]>([])
     
     const routeNavigator = useRouteNavigator();
+
     
     const getPatterns = async () => {
-        const allTemplates = "http://localhost:8080/api/v1/template"
+        const allTemplates = ApiConstants.TEMPLATE_BASE_URL
+        const userId = parseInt(localStorage.getItem(StorageKeyConstants.USER_ID)!)
+
         axios.get(allTemplates).then((response) => {
             const patterns = response.data
-            const convertedPatterns: Pattern[] = []
+            const convertedPatterns: TemplateBaseDto[] = []
             console.log("Patterns: ", patterns)
 
             patterns.forEach((pattern) => {
-                convertedPatterns.push(new Pattern(pattern.id, pattern.name, ""));
+                convertedPatterns.push(new TemplateBaseDto(pattern.id, pattern.name, ""));
             })
 
             console.log("Converted patterns: ", convertedPatterns)
@@ -41,8 +41,9 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
         getPatterns()
     }, []);
     
-    const handleClick = (index) => {
-        setSelectedPattern(index)
+    const handleClick = (id) => {
+        localStorage.setItem(StorageKeyConstants.TEMPLATE_ID, String(id));
+        setSelectedPattern(id)
     };
     
     return (
@@ -55,12 +56,12 @@ export const ChoosePattern: FC<NavIdProps> = ({ id }) => {
                 <Text className="text-header">Выберите шаблон</Text>
                 
                 <Div className="patterns-box">
-                    {patterns.map((pattern, index) => {
+                    {patterns.map((pattern) => {
                         return (
                           <Div
-                            key={index}
-                            className={`pattern ${selectedPattern === index ? 'selected' : ''}`}
-                            onClick={() => handleClick(index)}
+                            key={pattern.id}
+                            className={`pattern ${selectedPattern === pattern.id ? 'selected' : ''}`}
+                            onClick={() => handleClick(pattern.id)}
                           >
                             <Image className="pattern-image" src="/test_pattern.png"/>
                             <Text className="pattern-name">{pattern.name}</Text>

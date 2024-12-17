@@ -4,6 +4,7 @@ export class ApiConstants {
     public static USER_BASE_URL: string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/user`;
     public static RESUME_BASE_URL: string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/resume`;
     public static EDUCATION_BASE_URL : string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/education`;
+    public static TEMPLATE_BASE_URL : string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/template`;
     public static EDUCATION_INSTITUTION_BASE_URL : string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/education-institution`;
     public static COMPANY_BASE_URL : string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/company`;
     public static JOB_BASE_URL : string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/job`;

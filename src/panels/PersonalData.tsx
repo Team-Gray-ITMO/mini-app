@@ -145,7 +145,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             currentUser?.avatar,
             currentUser?.universities,
             currentUser?.workExperience,
-            '')
+            'Моё резюме')
         );
 
         addTestData();
