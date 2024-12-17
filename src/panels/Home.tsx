@@ -10,15 +10,13 @@ import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/Home.css'
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
-import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
-import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
 }
 
-class CV {
+export class CVHistory {
   constructor(
     public id: number,
     public name: string,
@@ -41,20 +39,14 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
   const fetchDataClient = new FetchDataClient();
 
-  const [CVs, setCVs] = useState<CV[]>([]);
+  const [CVs, setCVs] = useState<CVHistory[]>([]);
   const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
-   // if (fetchedUser) {
-     // setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
-
+    if (fetchedUser) {
       const fetchResumes = async () => {
         try {
           const response = await fetchDataClient.getHistory(fetchedUser!.id)
-
-          console.log(response)
-
-        //  const fetchedCVs = data.map((item) => new CV(item.id, item.summary, formatDate(item.createdAt)));
           setCVs(response);
         } catch (error) {
           console.error('Failed to fetch resumes:', error);
@@ -62,27 +54,13 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
       };
 
       fetchResumes();
-  //  }
+    }
 
     // Set color scheme
     document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
     document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
 
-  }, []);
-
-  function formatDate(inputDate: string) {
-    const date = new Date(inputDate);
-
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
-  }
+  }, [fetchedUser]);
 
   return (
     <Panel id={id}>

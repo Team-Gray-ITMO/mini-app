@@ -85,7 +85,7 @@ export const App = () => {
             <WorkStage id='work-stage' />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CV_PAGE}>
-            <CVPage id="cv-page"/>
+            <CVPage id="cv-page" fetchedUser={fetchedUser}/>
           </Panel>
         </View>
       </SplitCol>

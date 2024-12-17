@@ -1,19 +1,22 @@
 import {
-    Panel,
-    Button,
-    Div,
-    List, Text, Image
+  Panel,
+  Button,
+  Div,
+  List, Text, Image, NavIdProps
 } from '@vkontakte/vkui';
-import {useEffect, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {useMetaParams, useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import {InProcess} from "./InProcess.tsx";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
 import {CV} from "../models/CV.ts";
-import axios from "axios";
-import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
+import {UserInfo} from "@vkontakte/vk-bridge";
 
-export const CVPage = ({id}) => {
+export interface CVPageProps extends NavIdProps {
+  fetchedUser?: UserInfo;
+}
+
+export const CVPage: FC<CVPageProps> = ({id, fetchedUser}) => {
 
     const fetchDataClient = new FetchDataClient();
     const routeNavigator = useRouteNavigator();
@@ -57,55 +60,21 @@ export const CVPage = ({id}) => {
     }, []);
 
     const exportAsPdf = () => {
-      if (params === undefined) {
-        return
-      }
-      const resumeId = params.id;
+      const resumeId = params!.id!;
 
-      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/pdf`
-      axios.get(url, {
-        responseType: 'blob'
-      }).then((response) => {
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `resume_${resumeId}.pdf`;
-        link.click();
-      })
+      fetchDataClient.getResumeAsPdf(parseInt(resumeId), fetchedUser!.id)
     }
 
     const exportAsHtml = () => {
-      if (params === undefined) {
-        return
-      }
-      const resumeId = params.id;
+      const resumeId = params!.id!;
 
-      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/html`
-      axios.get(url).then((response) => {
-        const blob = new Blob([response.data], { type: 'application/octet-stream' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `resume_${resumeId}.html`;
-        link.click();
-      })
+      fetchDataClient.getResumeAsHtml(parseInt(resumeId), fetchedUser!.id)
     }
 
     const exportAsWord = async () => {
-      if (params === undefined) {
-        return
-      }
-      const resumeId = params.id;
+      const resumeId = params!.id!;
 
-      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/docx`
-      axios.get(url, {
-        responseType: 'blob'
-      }).then((response) => {
-        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-        const link = document.createElement('a');
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `resume_${resumeId}.docx`;
-        link.click();
-      })
+      fetchDataClient.getResumeAsDocx(parseInt(resumeId), fetchedUser!.id)
     }
 
     if (loading) {
@@ -136,7 +105,7 @@ export const CVPage = ({id}) => {
                         gap: '10%',
                         height: '3em',
                         padding: '0',
-                        marginTop: '20px'
+                        margin: '20px'
                     }}>
                         <Text style={{
                             marginLeft: '50px',
