@@ -132,9 +132,7 @@ export class CertificationDto {
 export class TemplateBaseDto {
     constructor(
         public id: number,
-        public createdAt: Date,
         public name: string,
-        public filePath: string
     ) {}
 }
 

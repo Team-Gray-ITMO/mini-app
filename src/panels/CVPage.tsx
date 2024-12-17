@@ -11,6 +11,7 @@ import {InProcess} from "./InProcess.tsx";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
 import {CV} from "../models/CV.ts";
 import axios from "axios";
+import {ApiConstants} from "../api/internal/constants/ApiConstants.ts";
 
 export const CVPage = ({id}) => {
 
@@ -61,7 +62,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/pdf`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/pdf`
       axios.get(url, {
         responseType: 'blob'
       }).then((response) => {
@@ -79,7 +80,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/html`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/html`
       axios.get(url).then((response) => {
         const blob = new Blob([response.data], { type: 'application/octet-stream' });
         const link = document.createElement('a');
@@ -95,7 +96,7 @@ export const CVPage = ({id}) => {
       }
       const resumeId = params.id;
 
-      const url = `http://localhost:8080/api/v1/resume/${resumeId}/docx`
+      const url = `${ApiConstants.RESUME_BASE_URL}/${resumeId}/docx`
       axios.get(url, {
         responseType: 'blob'
       }).then((response) => {
