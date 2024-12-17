@@ -49,10 +49,8 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
      // setUserData(new UserData(fetchedUser.id, fetchedUser.first_name, fetchedUser.photo_200));
 
       const fetchResumes = async () => {
-        const userId = parseInt(localStorage.getItem(StorageKeyConstants.USER_ID)!)
-
         try {
-          const response = await fetchDataClient.getHistory(userId)
+          const response = await fetchDataClient.getHistory(fetchedUser!.id)
 
           console.log(response)
 

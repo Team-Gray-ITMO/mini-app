@@ -73,7 +73,7 @@ export const App = () => {
             <Home id="home" fetchedUser={fetchedUser} />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.PATTERN}>
-            <ChoosePattern />
+            <ChoosePattern fetchedUser={fetchedUser} />
           </Panel>
           <Panel nav={DEFAULT_VIEW_PANELS.CREATE}>
             <PersonalData id="personal-data" fetchedUser={fetchedUser} currentUser={currentUser} />
