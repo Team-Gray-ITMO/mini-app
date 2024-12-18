@@ -1,5 +1,5 @@
 export class ApiConstants {
-    public static BASE_URL: string = 'https://c9ee-91-122-60-166.ngrok-free.app';
+    public static BASE_URL: string = 'https://fd10-91-122-60-166.ngrok-free.app';
     public static API_VER : string = 'api/v1';
     public static USER_BASE_URL: string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/user`;
     public static RESUME_BASE_URL: string = `${ApiConstants.BASE_URL}/${ApiConstants.API_VER}/resume`;
