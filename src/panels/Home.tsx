@@ -67,10 +67,10 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
         <Div className="header-box">
           <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
                  src='/logo.png'/>
-          {userData &&
+          {fetchedUser &&
             <Div className="user-data-box">
-              <Text className="username">{userData.name}</Text>
-              <Avatar noBorder={true} size={64} src={userData.avatar}/>
+              <Text className="username">{fetchedUser?.first_name}</Text>
+              <Avatar noBorder={true} size={64} src={fetchedUser?.photo_max_orig}/>
             </Div>
           }
         </Div>
