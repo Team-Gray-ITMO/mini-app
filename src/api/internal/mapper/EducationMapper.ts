@@ -9,6 +9,6 @@ export class EducationMapper {
 
     public universityDtoToEducationCreateDto(src : UniversityDto, educationInstitutionId : number, resumeId : number): EducationCreateDto {
         return new EducationCreateDto(resumeId, educationInstitutionId, EducationDegreeType.UNIVERSITY, src.education_status, '-',
-            src.chair_name, new Date('2015-01-01'), new Date(src.graduation, 0, 1, 0, 0, 0, 0), '-');
+            src.chair_name, new Date(src.start, 0, 1, 0, 0, 0, 0), new Date(src.graduation, 0, 1, 0, 0, 0, 0), src.grade);
     }
 }

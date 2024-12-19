@@ -42,8 +42,10 @@ export function mapUniversities(apiData: any[]): UniversityDto[] {
         item.chair,
         item.chair_name,
         item.graduation,
+        item.graduation,
         item.education_form,
-        item.education_status
+        item.education_status,
+        ''
     ));
 }
 

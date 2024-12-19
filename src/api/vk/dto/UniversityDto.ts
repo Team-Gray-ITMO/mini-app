@@ -7,9 +7,11 @@ export class UniversityDto {
         public faculty_name: string,            // наименование факультета
         public chair: number,                   // идентификатор кафедры
         public chair_name: string,              // наименование кафедры;
+        public start: number,                   // год начала обучения
         public graduation: number,              // год окончания обучения
         public education_form: string,          // форма обучения
         public education_status: string,        // статус обучения (например, «Выпускник (специалист)»)
+        public grade : string
         ) {
 
     }

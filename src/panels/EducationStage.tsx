@@ -236,6 +236,34 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Год начала обучения</Text>
+                                    <input name='start'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '400px',
+                                               textAlign: 'center'
+                                           }} value={item.start}
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           start: parseInt(e.target.value, 10)
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Год выпуска</Text>
                                     <input name='graduation'
                                            style={{
@@ -264,6 +292,34 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                 </Div>
 
                                 <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Оценка</Text>
+                                    <input name='grade'
+                                           style={{
+                                               color: '#494848',
+                                               fontSize: '1.5em',
+                                               margin: '10px 40px',
+                                               borderRadius: '30px',
+                                               padding: '10px',
+                                               border: 'none',
+                                               backgroundColor: '#fff',
+                                               minWidth: '400px',
+                                               textAlign: 'center'
+                                           }} value={item.grade}
+                                           onChange={(e) => {
+                                               const updatedEducation = userCV.education.map((eduItem, eduIndex) => {
+                                                   if (eduIndex === index) {
+                                                       return {
+                                                           ...eduItem,
+                                                           grade: parseInt(e.target.value, 10)
+                                                       };
+                                                   }
+                                                   return eduItem; // остальные элементы остаются без изменений
+                                               });
+                                               setCV({...userCV, education: updatedEducation});
+                                           }}/>
+                                </Div>
+
+                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                                     <Button
                                         size='s'
                                         style={{
@@ -277,7 +333,7 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                         }}
                                         onClick={() => handleDeleteEducation(index)}
                                     >
-                                        <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Убрать место работы</Text>
+                                        <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Убрать образовательное учреждение</Text>
                                     </Button>
                                 </Div>
 
