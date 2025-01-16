@@ -1,7 +1,7 @@
 import { useState, useEffect, ReactNode } from 'react';
 import bridge, { UserInfo } from '@vkontakte/vk-bridge';
-import {View, SplitLayout, SplitCol, Panel, Button} from '@vkontakte/vkui';
-import {useActiveVkuiLocation, useRouteNavigator} from '@vkontakte/vk-mini-apps-router';
+import {View, SplitLayout, SplitCol, Panel} from '@vkontakte/vkui';
+import {useActiveVkuiLocation} from '@vkontakte/vk-mini-apps-router';
 
 import { Home } from './panels';
 import {DEFAULT_VIEW, DEFAULT_VIEW_PANELS} from "./routes.ts";
@@ -13,8 +13,6 @@ import {mapCareers, mapUniversities} from './utils/vkApiMapping.ts';
 import {CV} from "./models/CV.ts";
 import {EducationStage} from "./panels/EducationStage.tsx";
 import {WorkStage} from "./panels/WorkStage.tsx";
-import axios from "axios";
-import {ApiConstants} from "./api/internal/constants/ApiConstants.ts";
 
 export const App = () => {
   const { view: activeView, panel: activePanel } = useActiveVkuiLocation();
@@ -31,9 +29,9 @@ export const App = () => {
       })).access_token;
 
       const user = await bridge.send('VKWebAppGetUserInfo');
-      console.log("User (native VK BRIDGE): " + JSON.stringify(user, null, 2));
+      console.log("User (native VK BRIDGE call): " + JSON.stringify(user, null, 2));
 
-      const userFromAPI = (await bridge.send('VKWebAppCallAPIMethod', {
+      const additionalUserInfo = (await bridge.send('VKWebAppCallAPIMethod', {
         method: 'users.get',
         params: {
           v: '5.131',
@@ -41,20 +39,22 @@ export const App = () => {
           access_token: token
         }})).response[0];
 
-      console.log("User from API: " + JSON.stringify(userFromAPI, null, 2));
+      console.log("User (from VK API call): " + JSON.stringify(additionalUserInfo, null, 2));
 
       const userEmail = await bridge.send('VKWebAppGetEmail');
       const userPhone = await bridge.send('VKWebAppGetPhoneNumber');
 
       const resumeInfo = new UserResumeInfo(
-          userFromAPI.first_name + " " + userFromAPI.last_name,
+          additionalUserInfo.last_name,
+          additionalUserInfo.first_name,
+          additionalUserInfo.first_name + " " + additionalUserInfo.last_name,
           userPhone.phone_number,
           userEmail.email,
-          userFromAPI.bdate,
-          userFromAPI.city.title,
-          user.photo_max_orig,
-          mapUniversities(userFromAPI.universities),
-          mapCareers(userFromAPI.career));
+          additionalUserInfo.bdate,
+          additionalUserInfo.city.title,
+          user.photo_max_orig!,
+          mapUniversities(additionalUserInfo.universities),
+          mapCareers(additionalUserInfo.career));
 
       console.log(resumeInfo);
 

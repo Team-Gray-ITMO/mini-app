@@ -1,17 +1,20 @@
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
-import {WorkFormatDto} from "../api/internal/dto/WorkFormatDto.ts";
 import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
+import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 
 export class CV {
     constructor(
+        public surname : string,
+        public name : string,
+        public patronymic : string,
         public snp: string,
         public phone: string,
         public email: string,
         public preferredConnectionType: ConnectionType,
         public preferredSpecialities: SpecialityDto[],
-        public preferredWorkFormats: WorkFormatDto[],
+        public preferredJobAttendanceFormat : JobAttendanceFormat,
         public dateOfBirth: Date,
         public city: string,
         public isReadyToMove: boolean,

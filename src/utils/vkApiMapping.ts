@@ -1,5 +1,6 @@
 import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
+import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
 
 /**
  * Преобразует строку, представляющую некоторую дату, получаемую из VK API, в объект Date и возвращает его
@@ -66,4 +67,15 @@ export function mapCareers(apiData: any[]): CareerDto[] {
         item.position,
         ''
     ));
+}
+
+export function mapSpecialityDtoToVKUiMultiselectModel(specialities : SpecialityDto[]): {value : number, label : string}[] {
+    return specialities.map(element => ({
+        value: element.id,
+        label: element.name
+    }));
+}
+
+export function mapVKUiMultiselectModelToSpecialityDto(vkUiSelectModel : {value : number, label : string}[]) : SpecialityDto[] {
+    return vkUiSelectModel.map(element => new SpecialityDto(element.value, element.label));
 }

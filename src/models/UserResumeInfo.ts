@@ -3,6 +3,8 @@ import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 
 export class UserResumeInfo {
     constructor(
+        public surname: string,
+        public userName: string,
         public name: string,
         public phone: string,
         public email: string,

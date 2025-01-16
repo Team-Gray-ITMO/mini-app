@@ -17,7 +17,6 @@ export const AppConfig = () => {
   return (
     <ConfigProvider
       appearance={vkBridgeAppearance}
-      platform={vk_platform === 'desktop_web' ? 'vkcom' : undefined}
       isWebView={vkBridge.isWebView()}
       hasCustomPanelHeaderAfter={true}
     >
