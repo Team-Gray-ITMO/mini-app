@@ -106,6 +106,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         setCV({ ...userCV, [name]: value });
     };
 
+    // TODO: extract to Mock objects
     const addTestData = ()=> {
         fetchedUser = {
             bdate: "",
@@ -121,12 +122,13 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             id: 1
         };
 
-        currentUser = new UserResumeInfo('Лиджигоряев', 'Владимир', 'Владимир Лиджигоряев', '+743434', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
+        currentUser = new UserResumeInfo('Специалистов', 'Специалист', 'Специалист Специалистов', '+743434533', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
             [
-                new UniversityDto(1, 'SPB', 'ITMO', 1, 'IPKN', 1, 'DWS', 2024, 2026, 'Очное', 'Master', '')
+                new UniversityDto(1, 'City', 'University', 1, 'Faculty', 1, 'Specialization', 2015, 2017, 'Очное', 'Master', '')
             ],
             [
-                new CareerDto(1, 'COMPANY', 'site.com', 1, 'SPB', 2022, 2024, 'Developer', 'CRUDOSHLEP')
+                new CareerDto(1, 'COMPANY #1', 'site.com', 1, 'City #1', 2022, 2024, 'DevOps', 'Requirements'),
+                new CareerDto(2, 'COMPANY #2', 'site.ru', 1, 'City #2', 2022, 2024, 'Frontend', 'Requirements')
             ]
         );
     };
@@ -228,7 +230,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
 
                         {userCV &&
-                            <Group style={{backgroundColor: '#fff'}}>
+                            <Group style={{backgroundColor: '#333'}}>
                                 <form onSubmit={(e) => e.preventDefault()}>
 
                                     <Div>
