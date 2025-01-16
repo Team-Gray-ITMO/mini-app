@@ -1,12 +1,30 @@
 import {FC, forwardRef, useEffect, useState} from 'react';
-import {Avatar, Button, Div, Image, NavIdProps, Panel, Text,} from '@vkontakte/vkui';
-import vkBridge, {UserInfo} from '@vkontakte/vk-bridge';
+import {
+    Avatar,
+    Button, Checkbox,
+    ChipsSelect, DateInput,
+    Div, Flex,
+    FormItem,
+    Group,
+    Image,
+    Input, LocaleProvider,
+    NavIdProps,
+    Panel,
+    PanelHeader,
+    Select,
+    Text, Textarea,
+} from '@vkontakte/vkui';
+import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import '../styles/personal_data.css';
-import {parseDate} from "../utils/vkApiMapping.ts";
+import {
+    mapSpecialityDtoToVKUiMultiselectModel,
+    mapVKUiMultiselectModelToSpecialityDto,
+    parseDate
+} from "../utils/vkApiMapping.ts";
 import {CV} from "../models/CV.ts";
 import {UserResumeInfo} from "../models/UserResumeInfo.ts";
 import {ConnectionType} from "../enums/ConnectionType.ts";
@@ -17,6 +35,8 @@ import {FetchDataClient, UserDto} from "../api/internal/client/FetchDataClient.t
 import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
+import {CVDataValidator} from "../utils/CVDataValidator.ts";
+import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -29,6 +49,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
     const fetchDataClient = new FetchDataClient();
     
     const [userCV, setCV] = useState<CV>(null);
+    const [emailError, setEmailError] = useState('empty');
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
             <button className={className} onClick={onClick} ref={ref}>
@@ -39,34 +60,50 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
 
     const resumeApiClient : CVApiClient = new CVApiClient();
 
-    const selectState = {
-        options: resumeApiClient.getSpecialities()
+    const specialitiesState = {
+        options: mapSpecialityDtoToVKUiMultiselectModel(resumeApiClient.getSpecialities())
+    };
+
+    const onSpecialityChange = (selectedList : {value : number, label : string}[]) => {
+        setCV({ ...userCV, preferredSpecialities: mapVKUiMultiselectModelToSpecialityDto(selectedList) });
     };
 
     const workFormatsSelect = {
         options: resumeApiClient.getWorkFormats()
     };
 
-    const onSpecialityChange = (selectedList, selectedItem) => {
-        setCV({ ...userCV, preferredSpecialities: selectedList });
-    };
 
-    const onWorkFormatChange = (selectedList, selectedItem) => {
-        setCV({ ...userCV, preferredWorkFormats: selectedList });
+    const onJobAttendanceFormatChange = (_, newValue : JobAttendanceFormat) => {
+        setCV({ ...userCV, preferredJobAttendanceFormat: newValue });
     };
 
     const onMoveChange = (event) => {
         setCV({ ...userCV, isReadyToMove: event.target.checked });
     };
 
+    const ERRORS_MAP = {
+        empty: 'Пожалуйста, введите электронную почту',
+        incorrect: 'Электронная почта некорректна',
+    };
+
+    const checkEmail = (email : string) => {
+        if (!email) {
+            setEmailError('empty');
+        } else if (!CVDataValidator.validateEmail(email)) {
+            setEmailError('incorrect');
+        } else {
+            setEmailError('');
+        }
+    };
+
+    const onEmailChange = (value) => {
+        setCV({ ...userCV, email: value });
+        checkEmail(value);
+    };
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setCV({ ...userCV, [name]: value });
-    };
-
-    const handleConnectionTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newConnectionType = event.target.value as ConnectionType;
-        setCV({ ...userCV, preferredConnectionType: newConnectionType });
     };
 
     const addTestData = ()=> {
@@ -84,32 +121,38 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             id: 1
         };
 
-        currentUser = new UserResumeInfo('Владимир Лиджигоряев', '+743434', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
+        currentUser = new UserResumeInfo('Лиджигоряев', 'Владимир', 'Владимир Лиджигоряев', '+743434', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
             [
-                new UniversityDto(1, 'SPB', 'ITMO', 1, 'IPKN', 1, 'DWS', 2026, 'Очное', 'Master')
+                new UniversityDto(1, 'SPB', 'ITMO', 1, 'IPKN', 1, 'DWS', 2024, 2026, 'Очное', 'Master', '')
             ],
             [
                 new CareerDto(1, 'COMPANY', 'site.com', 1, 'SPB', 2022, 2024, 'Developer', 'CRUDOSHLEP')
-            ])
+            ]
+        );
     };
 
     const init = ()=> {
-        setCV(new CV(currentUser?.name, currentUser?.phone, currentUser?.email,
-            ConnectionType.PHONE,
+        setCV(new CV(currentUser?.surname, currentUser?.userName, '',
+            currentUser?.name,
+            currentUser?.phone,
+            currentUser?.email,
+            null,
             [],
-            [],
+            null,
             parseDate(currentUser?.dateOfBirth),
             currentUser?.city,
-            false,
+            true,
             currentUser?.avatar,
             currentUser?.universities,
             currentUser?.workExperience,
             '',
             fetchedUser?.id)
         );
+
+        checkEmail(currentUser?.email);
     };
 
-    //addTestData();
+    addTestData();
 
     const handleNextStepButtonClick = async () => {
         if (!userCV || id === undefined) return;
@@ -169,6 +212,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
 
     return (
         <Panel id={id}>
+            <PanelHeader>Ввод личных данных</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Div>
                     <Image size={64} src='/logo.svg'/>
@@ -184,248 +228,205 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
 
                         {userCV &&
-                            <Div>
+                            <Group style={{backgroundColor: '#fff'}}>
+                                <form onSubmit={(e) => e.preventDefault()}>
 
-                                {/*
-                                TODO: Maybe extract text block into separate component with resume props data and use this everywhere it needs
-                                */}
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>ФИО</Text>
-                                    <input name='snp'
-                                        style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                            border: 'none',
-                                        backgroundColor: '#fff', minWidth: '400px', textAlign: 'center'}} value={userCV.snp} readOnly={false}
-                                    onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Телефон</Text>
-                                    <input name='phone'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               border: 'none',
-                                               padding: '10px',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.phone}
-                                           onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Email</Text>
-                                    <input name='email'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.email}
-                                           onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Предпочитаемый
-                                        способ связи</Text>
                                     <Div>
-                                        <label style={{
-                                            color: '#494848',
-                                            fontSize: '1.5em',
-                                            margin: '10px 40px',
-                                            borderRadius: '30px',
-                                            padding: '10px',
-                                            border: 'none',
-                                            backgroundColor: '#fff',
-                                            textAlign: 'center'
-                                        }}>
-                                            <input type="radio"
-                                                   name='connection_type'
-                                                   id="connection_phone"
-                                                   value={ConnectionType.PHONE}
-                                                   checked={userCV.preferredConnectionType == ConnectionType.PHONE}
-                                                   onChange={handleConnectionTypeChange}
-                                                   style={{
-                                                       color: '#494848',
-                                                       fontSize: '1.5em',
-                                                       margin: '10px 20px',
-                                                       borderRadius: '30px',
-                                                       padding: '10px',
-                                                       border: 'none',
-                                                       backgroundColor: '#fff',
-                                                       textAlign: 'center'
-                                                   }}/>
-                                            Телефон
-                                        </label>
-                                        <label style={{
-                                            color: '#494848',
-                                            fontSize: '1.5em',
-                                            margin: '10px 40px',
-                                            borderRadius: '30px',
-                                            padding: '10px',
-                                            border: 'none',
-                                            backgroundColor: '#fff',
-                                            textAlign: 'center'
-                                        }}>
-                                            <input type="radio"
-                                                   name='connection_type'
-                                                   id="connection_email"
-                                                   value={ConnectionType.EMAIL}
-                                                   checked={userCV.preferredConnectionType == ConnectionType.EMAIL}
-                                                   onChange={handleConnectionTypeChange}
-                                                   style={{
-                                                       color: '#494848',
-                                                       fontSize: '1.5em',
-                                                       margin: '10px 40px',
-                                                       borderRadius: '30px',
-                                                       padding: '10px',
-                                                       border: 'none',
-                                                       backgroundColor: '#fff',
-                                                       textAlign: 'center'
-                                                   }}/>
-                                            Email
-                                        </label>
+
+                                        <FormItem
+                                            htmlFor="surname"
+                                            top="Фамилия"
+                                            status={CVDataValidator.validateName(userCV.surname) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateName(userCV.surname) ? '' : 'Введите фамилию'}
+                                        >
+                                            <Input id="surname" name='surname' value={userCV.surname} onChange={handleChange} />
+                                        </FormItem>
+
+                                        <FormItem
+                                            htmlFor="name"
+                                            top="Имя"
+                                            status={CVDataValidator.validateName(userCV.name) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateName(userCV.name) ? '' : 'Введите имя'}
+                                        >
+                                            <Input id="name" name='name' value={userCV.name} onChange={handleChange} />
+                                        </FormItem>
+
+                                        <FormItem
+                                            htmlFor="patronymic"
+                                            top="Отчество"
+                                        >
+                                            <Input id="patronymic" name='patronymic' value={userCV.patronymic} onChange={handleChange} />
+                                        </FormItem>
+
+                                        <FormItem htmlFor="phone" top="Мобильный телефон">
+                                            <Input id="phone" name='phone' value={userCV.phone} onChange={handleChange} />
+                                        </FormItem>
+
+                                        <FormItem
+                                            htmlFor="email"
+                                            top="E-mail"
+                                            status={emailError ? 'error' : 'default'}
+                                            bottom={emailError ? ERRORS_MAP[emailError] : ''}
+                                            bottomId="email-type"
+                                            required
+                                        >
+                                            <Input
+                                                aria-labelledby="email-type"
+                                                id="email"
+                                                type="email"
+                                                name="email"
+                                                value={userCV.email}
+                                                required
+                                                onChange={(e) => onEmailChange(e.currentTarget.value)}
+                                            />
+                                        </FormItem>
+
+                                        <FormItem
+                                            top="Предпочитаемый способ связи"
+                                            htmlFor="connect-type"
+                                            status={CVDataValidator.validatePreferredConnectionType(userCV.preferredConnectionType) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validatePreferredConnectionType(userCV.preferredConnectionType) ? '' : 'Пожалуйста, укажите предпочитаемый способ связи'}
+                                            required
+                                        >
+                                            <Select
+                                                id="connect-type"
+                                                placeholder="Выберите способ"
+                                                onChange={e => {
+                                                    setCV({ ...userCV, preferredConnectionType: e.currentTarget.value as ConnectionType });
+                                                }}
+                                                value={userCV.preferredConnectionType}
+                                                options={[
+                                                    {
+                                                        value: ConnectionType.EMAIL,
+                                                        label: 'По электронной почте',
+                                                    },
+                                                    {
+                                                        value: ConnectionType.PHONE,
+                                                        label: 'По телефону',
+                                                    },
+                                                ]}
+                                            />
+                                        </FormItem>
+
+                                        <FormItem
+                                            htmlFor="preferredSpeciality"
+                                            top="Выберите предпочитаемые специальности"
+                                            required
+                                            status={CVDataValidator.validatePreferredSpecialities(userCV.preferredSpecialities) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validatePreferredSpecialities(userCV.preferredSpecialities) ? '' : 'Пожалуйста, выберите специальности'}
+                                        >
+                                            <ChipsSelect
+                                                id="preferredSpeciality"
+                                                options={specialitiesState.options}
+                                                value={mapSpecialityDtoToVKUiMultiselectModel(userCV.preferredSpecialities)}
+                                                onChange={(data : {value : number, label: string}[]) => onSpecialityChange(data)}
+                                                placeholder="Не выбраны"
+                                                emptyText="Ничего не найдено"
+                                                selectedBehavior="hide"
+                                                closeAfterSelect={false}
+                                                allowClearButton={true}
+                                            />
+                                        </FormItem>
+
+                                        <FormItem
+                                            top="Выберите формат работы"
+                                            htmlFor="preferredJobAttendanceFormat"
+                                            status={CVDataValidator.validatePreferredJobAttendanceFormat(userCV.preferredJobAttendanceFormat) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validatePreferredJobAttendanceFormat(userCV.preferredJobAttendanceFormat) ? '' : 'Пожалуйста, укажите предпочитаемый формат работы'}
+                                            required
+                                        >
+                                            <Select
+                                                id="preferredJobAttendanceFormat"
+                                                placeholder="Выберите формат"
+                                                onChange={e => {
+                                                    setCV({ ...userCV, preferredJobAttendanceFormat: e.currentTarget.value as JobAttendanceFormat });
+                                                }}
+                                                value={userCV.preferredJobAttendanceFormat}
+                                                options={[
+                                                    {
+                                                        value: JobAttendanceFormat.ON_SITE,
+                                                        label: 'В офисе',
+                                                    },
+                                                    {
+                                                        value: JobAttendanceFormat.HYBRID,
+                                                        label: 'Гибридный',
+                                                    },
+                                                    {
+                                                        value: JobAttendanceFormat.REMOTE,
+                                                        label: 'Удалённый',
+                                                    }
+                                                ]}
+                                            />
+                                        </FormItem>
+
+                                        <FormItem
+                                            top="Дата рождения"
+                                            htmlFor="bdate"
+                                            status={CVDataValidator.validateDateOfBirth(userCV.dateOfBirth) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateDateOfBirth(userCV.dateOfBirth) ? '' : 'Введите корректную дату рождения!'}
+                                            required
+                                        >
+                                            <Flex>
+                                                <LocaleProvider value='ru'>
+                                                    <DateInput
+                                                        id="date"
+                                                        value={userCV.dateOfBirth}
+                                                        onChange={newValue => {
+                                                            setCV({ ...userCV, dateOfBirth: newValue });
+                                                        }}
+                                                        minDateTime={CVDataValidator.MIN_BIRTH_DATE}
+                                                        enableTime={false}
+                                                        disablePast={false}
+                                                        disableFuture={true}
+                                                        closeOnChange={true}
+                                                        disablePickers={false}
+                                                        showNeighboringMonth={false}
+                                                        disableCalendar={false}
+                                                    />
+                                                </LocaleProvider>
+                                            </Flex>
+                                        </FormItem>
+
+                                        <FormItem
+                                            htmlFor="city"
+                                            top="Город проживания"
+                                            status={CVDataValidator.validateCity(userCV.city) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCity(userCV.city) ? '' : 'Введите город проживания'}
+                                            required
+                                        >
+                                            <Input id="city" name='city' value={userCV.city} onChange={handleChange} />
+                                        </FormItem>
+
+                                        <FormItem
+                                            top={
+                                                <FormItem.Top>
+                                                    <FormItem.TopLabel htmlFor="summary">О себе</FormItem.TopLabel>
+                                                    <FormItem.TopAside>{userCV.summary.length}/{CVDataValidator.MAX_SUMMARY_LENGTH}</FormItem.TopAside>
+                                                </FormItem.Top>
+                                            }
+                                        >
+                                            <Textarea
+                                                id="summary"
+                                                name="summary"
+                                                maxLength={CVDataValidator.MAX_SUMMARY_LENGTH}
+                                                value={userCV.summary}
+                                                onChange={handleChange}
+                                                placeholder="Уточнения навыков, интересы, увлечения..."
+                                            />
+                                        </FormItem>
+
+                                        <Checkbox
+                                            onChange={e => {
+                                                setCV({...userCV, isReadyToMove: e.target.checked})
+                                            }}
+                                            checked={userCV.isReadyToMove}
+                                        >
+                                            Готов(-а) к переезду или командировкам
+                                        </Checkbox>
                                     </Div>
-                                </Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Предпочитаемая специальность</Text>
-                                    <Multiselect
-                                        id='preferredSpeciality'
-                                        options={selectState.options}
-                                        onSelect={onSpecialityChange}
-                                        onRemove={onSpecialityChange}
-                                        displayValue="name"
-                                        placeholder='Специальность'
-                                        hidePlaceholder={true}
-                                        style={{
-                                            multiselectContainer: {
-                                                color: '#494848',
-                                                fontSize: '1.1em',
-                                                textAlign: 'center',
-                                                minWidth: '350px',
-                                                borderRadius: '30px',
-                                                padding: '10px',
-                                                border: 'none',
-                                                backgroundColor: '#fff',
-                                                maxWidth: '350px',
-                                            },
-                                            searchBox: {
-                                                border: 'none',
-                                                'border-bottom': '0px solid',
-                                                color: '#fff'
-                                            },
-                                            inputField: {
-                                                color: '#fff',
-                                                textAlign: 'center',
-                                                fontSize: '1.2em'
-                                            }
-                                        }}
-                                    />
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Формат работы</Text>
-                                    <Multiselect
-                                        id='preferredWorkFormat'
-                                        options={workFormatsSelect.options}
-                                        onSelect={onWorkFormatChange}
-                                        onRemove={onWorkFormatChange}
-                                        displayValue="name"
-                                        placeholder='Формат'
-                                        hidePlaceholder={true}
-                                        style={{
-                                            multiselectContainer: {
-                                                color: '#494848',
-                                                fontSize: '1.1em',
-                                                textAlign: 'center',
-                                                minWidth: '350px',
-                                                maxWidth: '350px',
-                                                borderRadius: '30px',
-                                                padding: '10px',
-                                                border: 'none',
-                                                backgroundColor: '#fff',
-                                            },
-                                            searchBox: {
-                                                border: 'none',
-                                                'border-bottom': '0px solid',
-                                                color: '#fff'
-                                            },
-                                            inputField: {
-                                                color: '#fff',
-                                                textAlign: 'center',
-                                                fontSize: '1.2em'
-                                            }
-                                        }}
-                                    />
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Дата
-                                        рождения</Text>
-                                    <DatePicker name='dateOfBirth' selected={userCV.dateOfBirth} onChange={(date) => {
-                                        if (date != null) {
-                                            setCV({ ...userCV, dateOfBirth: date });
-                                        }
-                                    }}
-                                                customInput={<ExampleCustomInput className='calendar-button'/>}
-                                                showMonthYearDropdown={true}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город
-                                        проживания</Text>
-                                    <input name='city'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.city}
-                                           onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>О себе</Text>
-                                    <input name='summary'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={userCV.summary}
-                                           onChange={handleChange}/>
-                                </Div>
-
-                                <Div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 10px'}}>Готовность к
-                                        переезду или командировкам</Text>
-                                    <input
-                                        type="checkbox"
-                                        name='isReadyToMove'
-                                        checked={userCV.isReadyToMove}
-                                        onChange={onMoveChange}
-                                    />
-                                </Div>
-                            </Div>
+                                </form>
+                            </Group>
                         }
                     </Div>
 
