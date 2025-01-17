@@ -25,6 +25,7 @@ import {EducationMapper} from "../api/internal/mapper/EducationMapper.ts";
 import {JobMapper} from "../api/internal/mapper/JobMapper.ts";
 import {CVDataValidator} from "../utils/CVDataValidator.ts";
 import {extractFileNameAndExtension} from "../utils/vkApiMapping.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 
 export interface WorkProps extends NavIdProps {
     id: string;
@@ -63,8 +64,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
     const handleSubmit = async () => {
         if (!userCV) return;
-        //const templateId = localStorage.getItem(StorageKeyConstants.TEMPLATE_ID)
-        const templateId = 3
+        const templateId = localStorage.getItem(StorageKeyConstants.TEMPLATE_ID)
 
         try {
 
@@ -75,7 +75,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                 new ResumeUpdateDto(
                     savedResume.id,
                     savedResume.summary,
-                    templateId,
+                    parseInt(templateId!),
                     userCV.title,
                     userCV.preferredJobAttendanceFormat,
                     userCV.preferredSpecialities.map(item => item.name),
