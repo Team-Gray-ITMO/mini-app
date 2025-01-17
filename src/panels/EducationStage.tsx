@@ -56,7 +56,7 @@ export const EducationStage: FC<EdProps> = ({id}) => {
     };
 
     const handleSubmit = async () => {
-        if (!userCV) return;
+        if (!userCV || !CVDataValidator.validateCVEducationData(userCV)) return;
 
         routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.WORK, {state: {cv: userCV}, keepSearchParams: true});
     };

@@ -63,7 +63,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
     };
 
     const handleSubmit = async () => {
-        if (!userCV) return;
+        if (!userCV || !CVDataValidator.validateCVWorkData(userCV)) return;
         const templateId = localStorage.getItem(StorageKeyConstants.TEMPLATE_ID)
 
         try {

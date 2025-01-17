@@ -20,6 +20,13 @@ export class CVDataValidator {
         return emailRegex.test(email.trim());
     }
 
+    public static validatePhone(phone: string): boolean {
+        const cleanedPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+        const phoneRegex = /^\d{6,15}$/;
+
+        return phoneRegex.test(cleanedPhone);
+    }
+
     public static validatePreferredConnectionType(connectionType: ConnectionType): boolean {
         return connectionType != null;
     }
@@ -70,6 +77,63 @@ export class CVDataValidator {
 
     public static validateWorkEndYear(workEndYear : number, workStartYear : number): boolean {
         return this.validateWorkStartYear(workEndYear) && (workEndYear >= workStartYear);
+    }
+
+    public static validateCVPersonalData(cv: CV) : boolean {
+        return this.validateName(cv.surname) &&
+            this.validateName(cv.name) &&
+            this.validateEmail(cv.email) &&
+            this.validatePhone(cv.phone) &&
+            this.validateEmail(cv.email) &&
+            this.validatePreferredConnectionType(cv.preferredConnectionType) &&
+            this.validatePreferredSpecialities(cv.preferredSpecialities) &&
+            this.validateDateOfBirth(cv.dateOfBirth) &&
+            this.validatePreferredJobAttendanceFormat(cv.preferredJobAttendanceFormat) &&
+            this.validateCity(cv.city) &&
+            this.validateAvatar(cv) &&
+            this.validateCommonText(cv.summary) &&
+            this.validateCommonText(cv.title) &&
+            cv.vkId != null
+    }
+
+    public static validateCVEducationData(cv : CV) : boolean {
+        const educationItems = cv.education;
+
+        let isValid: boolean = true;
+        educationItems.forEach(educationItem => {
+            isValid &&= this.validateCity(educationItem.city);
+            isValid &&= this.validateCommonText(educationItem.name);
+            isValid &&= this.validateCommonText(educationItem.faculty_name);
+            isValid &&= this.validateCommonText(educationItem.chair_name);
+            isValid &&= this.validateEducationStartYear(educationItem.start);
+            isValid &&= this.validateEducationGraduationYear(educationItem.graduation, educationItem.start);
+            isValid &&= this.validateCommonText(educationItem.education_form);
+            isValid &&= this.validateCommonText(educationItem.education_status);
+
+        });
+
+        return isValid;
+    }
+
+    public static validateCVWorkData(cv : CV) : boolean {
+        const workItems = cv.workExperience;
+
+        let isValid: boolean = true;
+        workItems.forEach(workItem => {
+            isValid &&= this.validateCommonText(workItem.company);
+            isValid &&= this.validateCommonText(workItem.site);
+            isValid &&= this.validateCommonText(workItem.city_name);
+            isValid &&= this.validateWorkStartYear(workItem.from);
+            isValid &&= this.validateWorkEndYear(workItem.until, workItem.from);
+            isValid &&= this.validateCommonText(workItem.position);
+            isValid &&= this.validateCommonText(workItem.requirements);
+            isValid &&= this.validatePreferredJobAttendanceFormat(workItem.attendanceFormat);
+
+
+
+        })
+
+        return isValid;
     }
 
 }

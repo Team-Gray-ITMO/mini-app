@@ -199,7 +199,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
     }, [cvParams]);
 
     const handleNextStepButtonClick = async () => {
-        if (!userCV || id === undefined) return;
+        if (!userCV || id === undefined || !CVDataValidator.validateCVPersonalData(userCV)) return;
 
         let userId : number = -1;
         let user: UserDto = null;
