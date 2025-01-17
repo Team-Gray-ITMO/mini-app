@@ -4,6 +4,7 @@ import {ApiConstants} from "../constants/ApiConstants.ts";
 import {EducationForm} from "../../../enums/EducationForm.ts";
 import {EducationAttendanceFormat} from "../../../enums/EducationAttendanceFormat.ts";
 import {JobAttendanceFormat} from "../../../enums/JobAttendanceFormat.ts";
+import {ConnectionType} from "../../../enums/ConnectionType.ts";
 
 export class CompanyCreateDto {
     constructor(
@@ -72,13 +73,15 @@ export class UserCreateDto {
         public vkId: string,
         public phoneNumber: string,
         public dateOfBirth: Date,
-        public cityName: string
+        public cityName: string,
+        public preferredContact : ConnectionType
     ) {
     }
 }
 
 export class ResumeCreateDto {
     constructor(
+        public title : string,
         public summary: string
     ) {
     }

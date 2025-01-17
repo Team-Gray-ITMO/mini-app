@@ -1,5 +1,4 @@
 import {
-    Avatar,
     Button, Card,
     Div, Flex, FormItem,
     Image, Input,
@@ -12,7 +11,6 @@ import {
 } from "@vkontakte/vkui";
 import {CV} from "../models/CV.ts";
 import {FC, useEffect, useState} from "react";
-import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {createNewWorkExperience} from "../utils/internalMapping.ts";
@@ -73,7 +71,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
         try {
 
-            const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(userCV.summary));
+            const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(userCV.title, userCV.summary));
             const resumeId = savedResume.id;
             await saveDataClient.updateResume(userCV.vkId, new ResumeUpdateDto(savedResume.id, savedResume.summary, parseInt(templateId!)));
 
