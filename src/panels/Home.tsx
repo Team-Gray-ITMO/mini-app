@@ -51,7 +51,7 @@ const EditableField = ({ vkId, resumeId, defaultName, creationTime }) => {
                     className="history-text">{value}
                 </Text>
             )}
-            <Text className="history-text">{creationTime}</Text>
+            <Text className="history-text" style={{ textAlign: "right" }}>{creationTime}</Text>
             <IconButton aria-label={'Подтвердить'} onClick={(e) => {
                 e.stopPropagation();
                 if (isEditing) {
