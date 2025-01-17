@@ -78,7 +78,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                     userCV.preferredJobAttendanceFormat,
                     userCV.preferredSpecialities.map(item => item.name),
                     userCV.isReadyForBusinessTrips,
-                    userCV.isReadyForRelocationcv,
+                    userCV.isReadyForRelocation,
                     //new FileDto(userCV.avatarFile.name, userCV.avatarFile.type, await userCV.avatarFile.arrayBuffer()))
                 )
             );
