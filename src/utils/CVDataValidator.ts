@@ -101,7 +101,6 @@ export class CVDataValidator {
 
         let isValid: boolean = true;
         educationItems.forEach(educationItem => {
-            isValid &&= this.validateCity(educationItem.city);
             isValid &&= this.validateCommonText(educationItem.name);
             isValid &&= this.validateCommonText(educationItem.faculty_name);
             isValid &&= this.validateCommonText(educationItem.chair_name);

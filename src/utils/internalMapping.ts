@@ -1,5 +1,6 @@
 import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
+import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 
 /**
  * Преобразует массив университетов в строковое представление, пригодное для вывода и возвращает его
@@ -36,5 +37,5 @@ export function createNewUniversity() : UniversityDto {
 }
 
 export function createNewWorkExperience() : CareerDto {
-    return new CareerDto();
+    return new CareerDto(2, '', '', 1, '', new Date().getDate(), new Date().getDate(), '', '', JobAttendanceFormat.ON_SITE);
 }

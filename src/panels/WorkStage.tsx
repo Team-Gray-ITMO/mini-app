@@ -383,7 +383,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                             handleAddWork()
                                         }}
                                     >
-                                        Добавить место обучения
+                                        Добавить место работы
                                     </Button>
                                 </FormItem>
 
