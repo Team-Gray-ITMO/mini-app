@@ -1,20 +1,69 @@
-import {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {
-  Panel,
-  Button,
-  Div,
-  Avatar,
-  NavIdProps, List, Text, Image,
+    Panel,
+    Button,
+    Div,
+    Avatar,
+    NavIdProps, List, Text, Image, IconButton,
+    Input,
 } from '@vkontakte/vkui';
 import {UserInfo} from '@vkontakte/vk-bridge';
 import {useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/Home.css'
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
+import { Icon20Check } from "@vkontakte/icons";
+import {ResumeUpdateDto, SaveDataClient} from "../api/internal/client/SaveDataClient.ts";
 
 export interface HomeProps extends NavIdProps {
   fetchedUser?: UserInfo;
 }
+
+const saveDataClient = new SaveDataClient();
+const fetchDataClient = new FetchDataClient();
+
+const EditableField = ({ vkId, resumeId, defaultName, creationTime }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [value, setValue] = useState(defaultName);
+    const routeNavigator = useRouteNavigator();
+
+    return (
+        <Div
+            className="history-item-box"
+            key={resumeId}
+            onClick={() => routeNavigator.push(`/cv-page/${resumeId}`)}
+            style={{cursor: 'pointer', zIndex: 1}}
+        >
+            {isEditing ? (
+                <Input
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    onClick={(e) => {e.stopPropagation()}}
+                    className="history-text"
+                />
+            ) : (
+                <Text
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEditing(true)
+                    }}
+                    style={{zIndex: 2}}
+                    className="history-text">{value}
+                </Text>
+            )}
+            <Text className="history-text">{creationTime}</Text>
+            <IconButton aria-label={'Подтвердить'} onClick={(e) => {
+                e.stopPropagation();
+                if (isEditing) {
+                    saveDataClient.updateResume(vkId, new ResumeUpdateDto(resumeId, null, null, value))
+                }
+                setIsEditing(!isEditing)
+            }}>
+                {isEditing ? <Icon20Check /> : null}
+            </IconButton>
+        </Div>
+    );
+};
 
 export class CVHistory {
   constructor(
@@ -25,22 +74,10 @@ export class CVHistory {
   }
 }
 
-// TODO: can use UserInfo from VK Bridge after supporting it
-class UserData {
-  constructor(
-    public id: number,
-    public name: string,
-    public avatar: string,
-  ) {
-  }
-}
-
 export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   const routeNavigator = useRouteNavigator();
-  const fetchDataClient = new FetchDataClient();
 
   const [CVs, setCVs] = useState<CVHistory[]>([]);
-  const [userData, setUserData] = useState<UserData>(null);
 
   useEffect(() => {
     if (fetchedUser) {
@@ -63,41 +100,34 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
   }, [fetchedUser]);
 
   return (
-    <Panel id={id}>
-        <Div className="header-box">
-          <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
-                 src='/logo.png'/>
-          {fetchedUser &&
-            <Div className="user-data-box">
-              <Text className="username">{fetchedUser?.first_name}</Text>
-              <Avatar noBorder={true} size={64} src={fetchedUser?.photo_max_orig}/>
-            </Div>
-          }
-        </Div>
+      <Panel id={id}>
+          <Div className="header-box">
+              <Image size={72} noBorder={true} style={{ marginLeft: '30px', marginTop: '25px'}}
+                     src='/logo.svg'/>
+              {fetchedUser &&
+                <Div className="user-data-box">
+                  <Text className="username">{fetchedUser?.first_name}</Text>
+                  <Avatar noBorder={true} size={64} src={fetchedUser?.photo_max_orig}/>
+                </Div>
+              }
+          </Div>
 
-      <Div className="history-box">
-        <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
-        <List className="history-list">
-          {CVs.map((CV) => (
-              <Div
-                  className="history-item-box"
-                  key={CV.id}
-                  onClick={() => routeNavigator.push(`/cv-page/${CV.id}`)}
-                  style={{cursor: 'pointer'}}
-              >
-                <Text className="history-text">{CV.name}</Text>
-                <Text className="history-text">{CV.creationTime}</Text>
-              </Div>
-          ))}
-        </List>
+          <Div className="history-box">
+              <Text style={{color: 'white', fontSize: '2em'}}>История</Text>
+              <List className="history-list">
+                  {CVs.map((CV) => (
+                      <EditableField key={CV.id} vkId={fetchedUser!.id} resumeId={CV.id} defaultName={CV.name} creationTime={CV.creationTime} />
+                  ))}
+              </List>
 
-      </Div>
+          </Div>
 
-      <Div className="button-box">
-        <Button size="l" onClick={() => routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN)} className="button">
-          <Text  className="button-text">Создать резюме</Text>
-        </Button>
-      </Div>
-    </Panel>
+          <Div className="button-box">
+              <Button size="l" onClick={() => routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN)}
+                      className="button">
+                  <Text className="button-text">Создать резюме</Text>
+              </Button>
+          </Div>
+      </Panel>
   );
 };

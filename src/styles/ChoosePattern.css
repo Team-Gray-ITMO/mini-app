@@ -43,7 +43,8 @@
 
 .pattern-name {
     color: #494848;
-    font-size: 1em
+    font-size: 1em;
+    width: 80%;
 }
 
 .text-header {
@@ -58,6 +59,12 @@
     width: 200px;
     color: black;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.pattern-info {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 
 .choose-pattern-button-text {
