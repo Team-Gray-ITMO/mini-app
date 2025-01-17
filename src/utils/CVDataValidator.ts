@@ -2,6 +2,7 @@ import {ConnectionType} from "../enums/ConnectionType.ts";
 import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
 import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 import {EducationForm} from "../enums/EducationForm.ts";
+import {CV} from "../models/CV.ts";
 
 export class CVDataValidator {
 
@@ -39,8 +40,8 @@ export class CVDataValidator {
         return city != null && city.trim().length > 0;
     }
 
-    public static validateAvatar(avatar : File) : boolean {
-        return avatar != null && avatar.type.startsWith('image/');
+    public static validateAvatar(cv : CV) : boolean {
+        return cv.avatar != null && cv.avatarContentType != null && cv.avatarContentType.startsWith('image/') && cv.avatarFile != null;
     }
 
     public static validateCommonText(text: string): boolean {

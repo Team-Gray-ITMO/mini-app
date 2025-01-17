@@ -44,6 +44,7 @@ import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 import {CVDataValidator} from "../utils/CVDataValidator.ts";
 import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 import {Icon12Question, Icon24Camera} from "@vkontakte/icons";
+import {Buffer} from "buffer";
 
 export interface ResumeProps extends NavIdProps {
     fetchedUser?: UserInfo;
@@ -90,10 +91,12 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         checkEmail(value);
     };
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const newAvatarFile = event.target.files?.[0]; // Получаем первый выбранный файл
         if (newAvatarFile) {
-            setCV({...userCV, avatarFile: newAvatarFile})
+            setCV({...userCV, avatar: newAvatarFile.name});
+            setCV({...userCV, avatarContentType: newAvatarFile.type});
+            setCV({...userCV, avatarFile: Buffer.from(await newAvatarFile.arrayBuffer()).toString('base64')});
         }
     };
 
@@ -112,7 +115,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
             last_name: "",
             photo_100: "",
             photo_200: "",
-            photo_max_orig: "",
+            photo_max_orig: "https://sun6-22.userapi.com/impf/DW4IDqvukChyc-WPXmzIot46En40R00idiUAXw/l5w5aIHioYc.jpg?quality=96&as=32x32,48x48,72x72,108x108,160x160,240x240,360x360&sign=10ad7d7953daabb7b0e707fdfb7ebefd&u=I6EtahnrCRLlyd0MhT2raQt6ydhuyxX4s72EHGuUSoM&cs=240x240",
             sex: 0,
             timezone: 0,
             id: 1
@@ -129,7 +132,25 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         );
     };
 
-    const init = ()=> {
+    const init = async ()=> {
+
+        const avatarUrl = fetchedUser?.photo_max_orig;
+        let avatarBase64 = "";
+        let avatarContentType = "";
+
+        console.log("trying to download file with url: ", avatarUrl);
+
+        if (avatarUrl != null) {
+            const response = await fetch(avatarUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch image. Status: ${response.status}`);
+            }
+
+            const buffer = Buffer.from(await response.arrayBuffer());
+            avatarBase64 = buffer.toString('base64');
+            avatarContentType = response.headers.get('content-type')!;
+        }
+
         setCV(
             new CV(
                 currentUser?.surname,
@@ -145,8 +166,9 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                 currentUser?.city,
                 true,
                 false,
-                currentUser?.avatar,
-                undefined,
+                avatarUrl,
+                avatarContentType,
+                avatarBase64,
                 currentUser?.universities,
                 currentUser?.workExperience,
                 '',
@@ -161,7 +183,9 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
     useEffect(() => {
         if (cvParams?.cv == null) {
             console.log('CV data not found in params');
-            addTestData();
+            if (fetchedUser == null) {
+                addTestData();
+            }
             console.log("Got this user info in Resume.tsx: " + JSON.stringify(currentUser, null, 2));
             console.log(currentUser?.universities);
             console.log(currentUser?.workExperience)
@@ -260,8 +284,8 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                                     padding: '12px 0px'
                                 }}>
                                     <FormItem
-                                        status={CVDataValidator.validateAvatar(userCV.avatarFile) ? 'default' : 'error'}>
-                                        <Avatar size={150} src={userCV.avatar}/>
+                                        status={CVDataValidator.validateAvatar(userCV) ? 'default' : 'error'}>
+                                        <Avatar size={150} src={`data:${userCV.avatarContentType};base64,${userCV.avatarFile}`}/>
                                     </FormItem>
                                 </Div>
 

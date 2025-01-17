@@ -42,7 +42,7 @@ export const CVPage: FC<CVPageProps> = ({id, fetchedUser}) => {
     useEffect(() => {
         const fetchResumeData = async () => {
             try {
-                const fetchedResume = await fetchDataClient.getResumeById(userCV.vkId, resumeId);
+                const fetchedResume = await fetchDataClient.getResumeById(userCV.vkId, parseInt(params!.id!));
                 console.log(fetchedResume)
             } catch (error) {
                 console.error("Ошибка при загрузке резюме:", error);
@@ -62,19 +62,19 @@ export const CVPage: FC<CVPageProps> = ({id, fetchedUser}) => {
     const exportAsPdf = () => {
       const resumeId = params!.id!;
 
-      fetchDataClient.getResumeAsPdf(parseInt(resumeId), fetchedUser!.id)
+      fetchDataClient.getResumeAsPdf(parseInt(resumeId), userCV.vkId)
     }
 
     const exportAsHtml = () => {
       const resumeId = params!.id!;
 
-      fetchDataClient.getResumeAsHtml(parseInt(resumeId), fetchedUser!.id)
+      fetchDataClient.getResumeAsHtml(parseInt(resumeId), userCV.vkId)
     }
 
     const exportAsWord = async () => {
       const resumeId = params!.id!;
 
-      fetchDataClient.getResumeAsDocx(parseInt(resumeId), fetchedUser!.id)
+      fetchDataClient.getResumeAsDocx(parseInt(resumeId), userCV.vkId)
     }
 
     if (loading) {
