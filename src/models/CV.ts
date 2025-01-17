@@ -25,6 +25,7 @@ export class CV {
         public workExperience: CareerDto[],
         public summary: string,
         public vkId: number,
+        public title : string
     ) {
     }
 }

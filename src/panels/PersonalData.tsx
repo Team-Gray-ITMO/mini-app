@@ -119,32 +119,38 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
 
         currentUser = new UserResumeInfo('Специалистов', 'Специалист', 'Специалист Специалистов', '+743434533', 'email@mail.ru', '2024-06-01', 'SPB', 'avatar',
             [
-                new UniversityDto(1, 'City', 'University', 1, 'Faculty', 1, 'Specialization', 2015, 2017, 'Очное', 'Master', '')
+                new UniversityDto(1, 'City', 'University', 1, 'Faculty', 1, 'Specialization', 2015, 2017, undefined, 'Master', '')
             ],
             [
-                new CareerDto(1, 'COMPANY #1', 'site.com', 1, 'City #1', 2022, 2024, 'DevOps', 'Requirements'),
-                new CareerDto(2, 'COMPANY #2', 'site.ru', 1, 'City #2', 2022, 2024, 'Frontend', 'Requirements')
+                new CareerDto(1, 'COMPANY #1', 'http://site.com', 1, 'City #1', 2022, 2024, 'DevOps', 'Requirements', JobAttendanceFormat.ON_SITE),
+                new CareerDto(2, 'COMPANY #2', 'http://site.ru', 1, 'City #2', 2022, 2024, 'Frontend', 'Requirements', JobAttendanceFormat.REMOTE)
             ]
         );
     };
 
     const init = ()=> {
-        setCV(new CV(currentUser?.surname, currentUser?.userName, '',
-            currentUser?.name,
-            currentUser?.phone,
-            currentUser?.email,
-            undefined,
-            [],
-            undefined,
-            parseDate(currentUser?.dateOfBirth),
-            currentUser?.city,
-            true,
-            currentUser?.avatar,
-            undefined,
-            currentUser?.universities,
-            currentUser?.workExperience,
-            '',
-            fetchedUser?.id)
+        setCV(
+            new CV(
+                currentUser?.surname,
+                currentUser?.userName,
+                '',
+                currentUser?.name,
+                currentUser?.phone,
+                currentUser?.email,
+                undefined,
+                [],
+                undefined,
+                parseDate(currentUser?.dateOfBirth),
+                currentUser?.city,
+                true,
+                currentUser?.avatar,
+                undefined,
+                currentUser?.universities,
+                currentUser?.workExperience,
+                '',
+                fetchedUser?.id,
+                ''
+            )
         );
 
         checkEmail(currentUser?.email);
@@ -188,6 +194,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                         userCV.phone,
                         userCV.dateOfBirth,
                         userCV.city,
+                        userCV.preferredConnectionType
                     )
                 );
                 userId = user.id;
