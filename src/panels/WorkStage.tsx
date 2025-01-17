@@ -43,11 +43,6 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
     console.log("Got cv in work stage: ", params?.cv);
     console.log('Set userCV in work after getting cv: ', userCV);
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setCV({ ...userCV, [name]: value });
-    };
-
     const handleAddWork = () => {
 
         const updatedWorkExperience = userCV.workExperience;
@@ -73,7 +68,20 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
             const savedResume = await saveDataClient.createResume(userCV.vkId, new ResumeCreateDto(userCV.title, userCV.summary));
             const resumeId = savedResume.id;
-            await saveDataClient.updateResume(userCV.vkId, new ResumeUpdateDto(savedResume.id, savedResume.summary, parseInt(templateId!), null));
+            await saveDataClient.updateResume(
+                userCV.vkId,
+                new ResumeUpdateDto(
+                    savedResume.id,
+                    savedResume.summary,
+                    templateId,
+                    userCV.title,
+                    userCV.preferredJobAttendanceFormat,
+                    userCV.preferredSpecialities.map(item => item.name),
+                    userCV.isReadyForBusinessTrips,
+                    userCV.isReadyForRelocationcv,
+                    //new FileDto(userCV.avatarFile.name, userCV.avatarFile.type, await userCV.avatarFile.arrayBuffer()))
+                )
+            );
 
             for (let i = 0; i < userCV.education.length; i++) {
                 const educationItem=  userCV.education[i];
