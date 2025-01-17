@@ -146,7 +146,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                     </Flex>
                 }
                 style={{textAlign: 'center'}}
-            >Ввод данных о месте работы (шаг № 3 / 3)</PanelHeader>
+            >Данные о месте работы (шаг № 3 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
 
@@ -330,6 +330,9 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                     <FormItem.TopAside>{item.requirements.length}/{CVDataValidator.MAX_REQUIREMENTS_LENGTH}</FormItem.TopAside>
                                                 </FormItem.Top>
                                             }
+                                            required
+                                            status={CVDataValidator.validateCommonText(item.requirements) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCommonText(item.requirements) ? '' : 'Пожалуйста, заполните информацию об обязанностях на рабочем метсе'}
                                         >
                                             <Textarea
                                                 id="summary"

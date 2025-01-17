@@ -266,7 +266,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                     </Flex>
                 }
                 style={{textAlign: 'center'  }}
-            >Ввод личных данных (шаг № 1 / 3)</PanelHeader>
+            >Личные данные (шаг № 1 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
 
@@ -498,6 +498,9 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                                             </FormItem.TopAside>
                                         </FormItem.Top>
                                     }
+                                    required
+                                    status={CVDataValidator.validateCommonText(userCV.summary) ? 'default' : 'error'}
+                                    bottom={CVDataValidator.validateCommonText(userCV.summary) ? '' : 'Пожалуйста, заполните информацию о себе'}
                                 >
                                     <Textarea
                                         id="summary"

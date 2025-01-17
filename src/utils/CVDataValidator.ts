@@ -109,6 +109,7 @@ export class CVDataValidator {
             isValid &&= this.validateEducationGraduationYear(educationItem.graduation, educationItem.start);
             isValid &&= this.validateCommonText(educationItem.education_form);
             isValid &&= this.validateCommonText(educationItem.education_status);
+            isValid &&= this.validateCommonText(educationItem.grade);
 
         });
 
