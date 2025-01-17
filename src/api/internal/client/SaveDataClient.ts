@@ -29,6 +29,9 @@ export class EducationCreateDto {
     constructor(
         public resumeId: number,
         public educationInstitutionId: number,
+        public institutionSubdivision : string,
+        public format : EducationForm,
+        public attendanceFormat : EducationAttendanceFormat,
         public degreeType: string,
         public degreeName: string,
         public fieldOfStudy: string,

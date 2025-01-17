@@ -16,6 +16,7 @@ import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {createNewUniversity} from "../utils/internalMapping.ts";
 import {CVDataValidator} from "../utils/CVDataValidator.ts";
+import {EducationForm} from "../enums/EducationForm.ts";
 
 export interface EdProps extends NavIdProps {
     id: string;
@@ -207,15 +208,15 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                                                     value={item.education_form}
                                                     options={[
                                                         {
-                                                            value: 'Очная',
+                                                            value: 'FULL_TIME',
                                                             label: 'Очная',
                                                         },
                                                         {
-                                                            value: 'Заочная',
+                                                            value: 'PART_TIME',
                                                             label: 'Заочная',
                                                         },
                                                         {
-                                                            value: 'Очно-заочная',
+                                                            value: 'CORRESPONDENCE',
                                                             label: 'Очно-заочная',
                                                         },
                                                     ]}
