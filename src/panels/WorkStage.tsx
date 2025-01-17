@@ -6,8 +6,8 @@ import {
     NavIdProps,
     Panel,
     PanelHeader,
-    PanelHeaderBack,
-    Text, Textarea,
+    PanelHeaderBack, Select,
+    Textarea,
     usePlatform
 } from "@vkontakte/vkui";
 import {CV} from "../models/CV.ts";
@@ -147,7 +147,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                         <Card style={{minWidth: '90%'}}>
                             <form onSubmit={(e) => e.preventDefault()}>
                                 {userCV.workExperience.map((item, index) => (
-                                    <Div>
+                                    <Div key={index}>
 
                                         <FormItem
                                             htmlFor="company"
@@ -273,6 +273,46 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                                                 });
                                                 setCV({...userCV, workExperience: updatedJobs});
                                             }}/>
+                                        </FormItem>
+
+                                        <FormItem
+                                            top="Формат работы"
+                                            htmlFor="work-format"
+                                            status={CVDataValidator.validateEducationForm(item.attendanceFormat) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateEducationForm(item.attendanceFormat) ? '' : 'Пожалуйста, укажите формат работы'}
+                                            required
+                                        >
+                                            <Select
+                                                id="work-format"
+                                                placeholder="Выберите формат работы"
+                                                onChange={e => {
+                                                    const updatedWork = userCV.workExperience.map((workItem, workIndex) => {
+                                                        if (workIndex === index) {
+                                                            return {
+                                                                ...workItem,
+                                                                attendanceFormat: e.target.value
+                                                            };
+                                                        }
+                                                        return workItem;
+                                                    });
+                                                    setCV({...userCV, workExperience: updatedWork});
+                                                }}
+                                                value={item.attendanceFormat}
+                                                options={[
+                                                    {
+                                                        value: 'ON_SITE',
+                                                        label: 'В офисе',
+                                                    },
+                                                    {
+                                                        value: 'HYBRID',
+                                                        label: 'Гибрид',
+                                                    },
+                                                    {
+                                                        value: 'REMOTE',
+                                                        label: 'Удалённый',
+                                                    },
+                                                ]}
+                                            />
                                         </FormItem>
 
                                         <FormItem
