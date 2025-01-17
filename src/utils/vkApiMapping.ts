@@ -1,6 +1,7 @@
 import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
+import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 
 /**
  * Преобразует строку, представляющую некоторую дату, получаемую из VK API, в объект Date и возвращает его
@@ -65,7 +66,8 @@ export function mapCareers(apiData: any[]): CareerDto[] {
         item.from,
         item.until,
         item.position,
-        ''
+        '',
+        JobAttendanceFormat.ON_SITE
     ));
 }
 
@@ -78,4 +80,16 @@ export function mapSpecialityDtoToVKUiMultiselectModel(specialities : Speciality
 
 export function mapVKUiMultiselectModelToSpecialityDto(vkUiSelectModel : {value : number, label : string}[]) : SpecialityDto[] {
     return vkUiSelectModel.map(element => new SpecialityDto(element.value, element.label));
+}
+
+export function extractFileNameAndExtension(url: string): string {
+    const regex = /\/([^\/?#]+)\.([a-zA-Z0-9]+)(?:\?|#|$)/;
+    const match = url.match(regex);
+
+    if (match) {
+        const [_, name, extension] = match;
+        return name + "." + extension;
+    } else {
+        return 'Avatar.jpg';
+    }
 }

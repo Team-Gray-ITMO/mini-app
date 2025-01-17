@@ -15,15 +15,17 @@ import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {createNewWorkExperience} from "../utils/internalMapping.ts";
 import {
-  ResumeCreateDto,
-  ResumeUpdateDto,
-  SaveDataClient
+    FileDto,
+    ResumeCreateDto,
+    ResumeUpdateDto,
+    SaveDataClient
 } from "../api/internal/client/SaveDataClient.ts";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
-import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {EducationMapper} from "../api/internal/mapper/EducationMapper.ts";
 import {JobMapper} from "../api/internal/mapper/JobMapper.ts";
 import {CVDataValidator} from "../utils/CVDataValidator.ts";
+import {extractFileNameAndExtension} from "../utils/vkApiMapping.ts";
+import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 
 export interface WorkProps extends NavIdProps {
     id: string;
@@ -73,13 +75,13 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                 new ResumeUpdateDto(
                     savedResume.id,
                     savedResume.summary,
-                    templateId,
+                    parseInt(templateId!),
                     userCV.title,
                     userCV.preferredJobAttendanceFormat,
                     userCV.preferredSpecialities.map(item => item.name),
                     userCV.isReadyForBusinessTrips,
                     userCV.isReadyForRelocation,
-                    //new FileDto(userCV.avatarFile.name, userCV.avatarFile.type, await userCV.avatarFile.arrayBuffer()))
+                    new FileDto(extractFileNameAndExtension(userCV.avatar), userCV.avatarContentType, userCV.avatarFile)
                 )
             );
 

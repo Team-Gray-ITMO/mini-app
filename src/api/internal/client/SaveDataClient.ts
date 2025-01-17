@@ -97,7 +97,7 @@ export class ResumeUpdateDto {
     public preferredSpecialities : string[],
     public readyForBusinessTrips : boolean,
     public readyForRelocation : boolean,
-    //public image : FileDto
+    public image : FileDto
   ) {
   }
 }
@@ -107,7 +107,7 @@ export class FileDto {
     constructor(
         public filename: string,
         public contentType: string,
-        public content: ArrayBuffer,
+        public contentBase64: string,
     ) {
     }
 }
