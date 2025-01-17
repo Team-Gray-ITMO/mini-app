@@ -9,12 +9,12 @@
     display: flex;
     gap: 50px;
     align-items: center;
-    margin-right: 20px;
+    padding: 0;
 }
 
 .username {
     font-size: 1.5em;
-     color: white;
+    color: white;
 }
 
 .history-box {

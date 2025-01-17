@@ -105,7 +105,7 @@ export const Home: FC<HomeProps> = ({ id, fetchedUser }) => {
               <Image size={72} noBorder={true} style={{ marginLeft: '30px', marginTop: '25px'}}
                      src='/logo.svg'/>
               {fetchedUser &&
-                <Div className="user-data-box">
+                <Div className="user-data-box" style={{ marginRight: '30px', marginTop: '25px'}}>
                   <Text className="username">{fetchedUser?.first_name}</Text>
                   <Avatar noBorder={true} size={64} src={fetchedUser?.photo_max_orig}/>
                 </Div>
