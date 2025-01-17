@@ -466,7 +466,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                                             <FormItem.TopAside>{userCV.summary.length}/{CVDataValidator.MAX_SUMMARY_LENGTH}</FormItem.TopAside>
                                             <FormItem.TopAside>
                                                 <Tooltip
-                                                    text="В разделе «О себе» укажите участие в программах
+                                                    text="В разделе «О себе» будет полезно рассказать об участии в программах
                                                     VK Education, акцентируя внимание на практическом опыте,
                                                     реализованных проектах и решённых задачах."
                                                     placement="right" style={{marginLeft: '10px'}}>
