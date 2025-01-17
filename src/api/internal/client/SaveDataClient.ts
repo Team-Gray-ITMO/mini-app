@@ -90,38 +90,14 @@ export class ResumeCreateDto {
 export class ResumeUpdateDto {
   constructor(
     public id: number,
-    public summary: string,
-    public templateId: number
+    public summary: string | null,
+    public templateId: number | null,
+    public title: string | null,
   ) {
   }
 }
 
 export class SaveDataClient {
-    
-    public addCertification() {
-        
-        
-        const url = `${ApiConstants.BASE_URL}/api/v1/certification`
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                
-            }
-            
-        })
-    }
-    
-    public addJob(job: JobCreateDto) {
-        const url = `${ApiConstants.BASE_URL}/api/v1/job`
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                job
-            }
-        })
-    }
 
     /**
      * Добавляет место работы
@@ -217,28 +193,6 @@ export class SaveDataClient {
                 error.response?.data?.message || 'Произошла ошибка при добавлении образования'
             );
         }
-    }
-    
-    public addSkill(skill: SkillCreateDto) {
-        const url = `${ApiConstants.BASE_URL}/api/v1/skill`
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                skill
-            }
-        })
-    }
-    
-    public addLanguage(language: LanguageCreateDto) {
-        const url = `${ApiConstants.BASE_URL}/api/v1/language`
-        axios({
-            method: 'post',
-            url: url,
-            data: {
-                language
-            }
-        })
     }
 
     /**
