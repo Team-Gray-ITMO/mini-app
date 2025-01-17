@@ -4,6 +4,7 @@ import {UniversityDto} from "../api/vk/dto/UniversityDto.ts";
 import {CareerDto} from "../api/vk/dto/CareerDto.ts";
 import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
 
+
 export class CV {
     constructor(
         public surname : string,
@@ -19,6 +20,7 @@ export class CV {
         public city: string,
         public isReadyToMove: boolean,
         public avatar: string,
+        public avatarFile: File,
         public education: UniversityDto[],
         public workExperience: CareerDto[],
         public summary: string,
