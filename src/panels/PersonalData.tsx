@@ -284,6 +284,16 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                                 </Div>
 
                                 <FormItem
+                                    htmlFor="title"
+                                    top="Название резюме"
+                                    status={CVDataValidator.validateCommonText(userCV.title) ? 'default' : 'error'}
+                                    bottom={CVDataValidator.validateCommonText(userCV.title) ? '' : 'Введите название создаваемого резюме'}
+                                    required
+                                >
+                                    <Input id="title" name='title' value={userCV.title} onChange={handleTextInputChange} />
+                                </FormItem>
+
+                                <FormItem
                                     htmlFor="surname"
                                     top="Фамилия"
                                     status={CVDataValidator.validateName(userCV.surname) ? 'default' : 'error'}
