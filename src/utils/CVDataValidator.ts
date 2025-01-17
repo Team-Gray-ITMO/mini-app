@@ -7,6 +7,7 @@ export class CVDataValidator {
 
     public static MIN_BIRTH_DATE : Date = new Date(1900, 1, 0);
     public static MAX_SUMMARY_LENGTH = 1500;
+    public static MAX_REQUIREMENTS_LENGTH = 1000;
 
     public static validateName(name: string): boolean {
         const nameRegex = /^\p{L}+([-']?\p{L}+)?$/u;
@@ -55,11 +56,19 @@ export class CVDataValidator {
     }
 
     public static validateEducationGraduationYear(educationGraduationDate : number, educationStartDate : number): boolean {
-        return educationGraduationDate != null && educationGraduationDate >= educationStartDate && educationGraduationDate <= (new Date()).getFullYear();
+        return this.validateEducationStartYear(educationGraduationDate) && (educationGraduationDate >= educationStartDate);
     }
 
     public static validateEducationGrade(educationGrade : string): boolean {
         return educationGrade != null && educationGrade.length > 0;
+    }
+
+    public static validateWorkStartYear(workStartYear : number): boolean {
+        return this.validateEducationStartYear(workStartYear);
+    }
+
+    public static validateWorkEndYear(workEndYear : number, workStartYear : number): boolean {
+        return this.validateWorkStartYear(workEndYear) && (workEndYear >= workStartYear);
     }
 
 }

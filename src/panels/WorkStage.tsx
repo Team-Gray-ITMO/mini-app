@@ -1,20 +1,31 @@
-import {Avatar, Button, Div, Image, NavIdProps, Panel, Text} from "@vkontakte/vkui";
+import {
+    Avatar,
+    Button, Card,
+    Div, Flex, FormItem,
+    Image, Input,
+    NavIdProps,
+    Panel,
+    PanelHeader,
+    PanelHeaderBack,
+    Text, Textarea,
+    usePlatform
+} from "@vkontakte/vkui";
 import {CV} from "../models/CV.ts";
 import {FC, useEffect, useState} from "react";
 import {CVApiClient} from "../api/internal/client/CVApiClient.ts";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
-import {createNewUniversity, createNewWorkExperience} from "../utils/internalMapping.ts";
+import {createNewWorkExperience} from "../utils/internalMapping.ts";
 import {
   ResumeCreateDto,
   ResumeUpdateDto,
-  SaveDataClient,
-  UserCreateDto
+  SaveDataClient
 } from "../api/internal/client/SaveDataClient.ts";
 import {FetchDataClient} from "../api/internal/client/FetchDataClient.ts";
 import {StorageKeyConstants} from "../storage/StorageKeyConstants.tsx";
 import {EducationMapper} from "../api/internal/mapper/EducationMapper.ts";
 import {JobMapper} from "../api/internal/mapper/JobMapper.ts";
+import {CVDataValidator} from "../utils/CVDataValidator.ts";
 
 export interface WorkProps extends NavIdProps {
     id: string;
@@ -22,30 +33,17 @@ export interface WorkProps extends NavIdProps {
 
 export const WorkStage: FC<WorkProps> = ({id}) => {
     const saveDataClient = new SaveDataClient();
-    const fetchDataClient = new FetchDataClient();
+    new FetchDataClient();
     const educationMapper = new EducationMapper();
     const jobMapper = new JobMapper();
 
     const params = useMetaParams<{cv: CV}>();
     const [userCV, setCV] = useState<CV>(params?.cv);
+    const platform = usePlatform();
 
 
     console.log("Got cv in work stage: ", params?.cv);
     console.log('Set userCV in work after getting cv: ', userCV);
-
-    const resumeApiClient : CVApiClient = new CVApiClient();
-
-    const selectState = {
-        options: resumeApiClient.getSpecialities()
-    };
-
-    const workFormatsSelect = {
-        options: resumeApiClient.getWorkFormats()
-    };
-
-    const onMoveChange = (event) => {
-        setCV({ ...userCV, isReadyToMove: event.target.checked });
-    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -90,7 +88,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                     educationMapper.universityDtoToEducationCreateDto(educationItem, educationInstitution.id, resumeId)
                 );
 
-                console.log(`Saved ${i + 1} education item: `, savedEducationItem);
+                console.debug(`Saved ${i + 1} education item: `, savedEducationItem);
             }
 
             for (let i = 0; i < userCV.workExperience.length; i++) {
@@ -104,7 +102,7 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
                     jobMapper.careerDtoToJobCreateDto(workItem, company.id, resumeId)
                 );
 
-                console.log(`Saved ${i + 1} work item: `, savedWorkItem);
+                console.debug(`Saved ${i + 1} work item: `, savedWorkItem);
             }
 
             await routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.CV_PAGE, {id: String(resumeId)}, {state: {cv: userCV}, keepSearchParams: true});
@@ -126,288 +124,232 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
 
     return (
         <Panel id={id}>
+            <PanelHeader
+                before={
+                    <PanelHeaderBack
+                        onClick={() => {
+                            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
+                        }}
+                        label={platform === 'vkcom' ? 'Назад' : undefined}
+                    />
+                }
+                style={{textAlign: 'center'}}
+            >Ввод данных о месте работы (шаг №3 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
-                <Div>
+                <Flex justify='center'>
                     <Image size={70} src='/logo.svg'/>
-                </Div>
+                </Flex>
 
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
-                    {userCV &&
-                        <Div style={{display: "flex", gap: "50px", alignItems: "center", marginBottom: '50px'}}>
-                            <Avatar size={150} src={userCV.avatar}/>
-                        </Div>
-                    }
 
-                    <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px"}}>
+                    <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", minWidth: '100%'}}>
 
-                        {userCV.workExperience.map((item, index) => (
-                            <Div>
+                        <Card style={{minWidth: '90%'}}>
+                            <form onSubmit={(e) => e.preventDefault()}>
+                                {userCV.workExperience.map((item, index) => (
+                                    <Div>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Организация</Text>
-                                    <input name='company'
-                                           style={{color: '#494848', fontSize: '1.5em', margin: '10px 40px', borderRadius: '30px', padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff', minWidth: '400px', textAlign: 'center'}} value={item.company} readOnly={false}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           company: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="company"
+                                            top="Организация"
+                                            status={CVDataValidator.validateCommonText(item.company) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCommonText(item.company) ? '' : 'Введите наименование организации'}
+                                            required
+                                        >
+                                            <Input id="company" name='company' value={item.company} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            company: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Сайт организации</Text>
-                                    <input name='site'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           site: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="site"
+                                            top="Сайт организации"
+                                            status={CVDataValidator.validateCommonText(item.site) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCommonText(item.site) ? '' : 'Введите сайт организации'}
+                                            required
+                                        >
+                                            <Input id="site" name='site' value={item.site} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            site: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Позиция</Text>
-                                    <input name='position'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               border: 'none',
-                                               padding: '10px',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={item.position}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           position: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="position"
+                                            top="Позиция"
+                                            status={CVDataValidator.validateCommonText(item.site) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCommonText(item.site) ? '' : 'Введите позицию в компании'}
+                                            required
+                                        >
+                                            <Input id="position" name='position' value={item.position} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            position: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}} >
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Начало</Text>
-                                    <input name='from'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={item.from}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           from: parseInt(e.target.value, 10)
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="from"
+                                            top="Год начала работы"
+                                            status={CVDataValidator.validateEducationStartYear(item.from) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateEducationStartYear(item.from) ? '' : 'Пожалуйста, введите правильный год начала работы'}
+                                            required
+                                        >
+                                            <Input id="from" name='from' value={item.from} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            from: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Окончание</Text>
-                                    <input name='until'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }} value={ item.until == null && item.from != null ? 'н.в.' : item.until}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           until: parseInt(e.target.value, 10)
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="until"
+                                            top="Год окончания работы"
+                                            status={CVDataValidator.validateWorkEndYear(item.until, item.from) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateWorkEndYear(item.until, item.from) ? '' : 'Пожалуйста, введите правильный год окончания работы'}
+                                            required
+                                        >
+                                            <Input id="until" name='until' value={item.until} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            until: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Город, в котором работал</Text>
-                                    <input name='city_name'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           city_name: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            htmlFor="city-name"
+                                            top="Город, в котором работал(-а)"
+                                            status={CVDataValidator.validateCommonText(item.city_name) ? 'default' : 'error'}
+                                            bottom={CVDataValidator.validateCommonText(item.city_name) ? '' : 'Введите название города'}
+                                            required
+                                        >
+                                            <Input id="city-name" name='city-name' value={item.city_name} onChange={e => {
+                                                const updatedJobs = userCV.workExperience.map((eduItem, eduIndex) => {
+                                                    if (eduIndex === index) {
+                                                        return {
+                                                            ...eduItem,
+                                                            city_name: e.target.value
+                                                        };
+                                                    }
+                                                    return eduItem;
+                                                });
+                                                setCV({...userCV, workExperience: updatedJobs});
+                                            }}/>
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-                                    <Text style={{color: '#fff', fontSize: '1.5em', margin: '10px 40px'}}>Обязанности</Text>
-                                    <input name='requirements'
-                                           style={{
-                                               color: '#494848',
-                                               fontSize: '1.5em',
-                                               margin: '10px 40px',
-                                               borderRadius: '30px',
-                                               padding: '10px',
-                                               border: 'none',
-                                               backgroundColor: '#fff',
-                                               minWidth: '400px',
-                                               textAlign: 'center'
-                                           }}
-                                           onChange={(e) => {
-                                               const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
-                                                   if (workIndex === index) {
-                                                       return {
-                                                           ...workItem,
-                                                           requirements: e.target.value // обновляем только поле name
-                                                       };
-                                                   }
-                                                   return workItem; // остальные элементы остаются без изменений
-                                               });
-                                               setCV({...userCV, workExperience: updatedWorkExp});
-                                           }}/>
-                                </Div>
+                                        <FormItem
+                                            top={
+                                                <FormItem.Top>
+                                                    <FormItem.TopLabel htmlFor="summary">Обязанности</FormItem.TopLabel>
+                                                    <FormItem.TopAside>{item.requirements.length}/{CVDataValidator.MAX_REQUIREMENTS_LENGTH}</FormItem.TopAside>
+                                                </FormItem.Top>
+                                            }
+                                        >
+                                            <Textarea
+                                                id="summary"
+                                                name="summary"
+                                                maxLength={CVDataValidator.MAX_REQUIREMENTS_LENGTH}
+                                                value={item.requirements}
+                                                onChange={(e) => {
+                                                    const updatedWorkExp = userCV.workExperience.map((workItem, workIndex) => {
+                                                        if (workIndex === index) {
+                                                            return {
+                                                                ...workItem,
+                                                                requirements: e.target.value
+                                                            };
+                                                        }
+                                                        return workItem;
+                                                    });
+                                                    setCV({...userCV, workExperience: updatedWorkExp});}
+                                                }
+                                                placeholder="Какие задачи выполняли, что делали, чего достигли..."
+                                            />
+                                        </FormItem>
 
-                                <Div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                                        <FormItem>
+                                            <Button
+                                                type="button"
+                                                size="l"
+                                                stretched
+                                                onClick={_ => {
+                                                    handleDeleteWork(index)
+                                                }}
+                                            >
+                                                Убрать место работы
+                                            </Button>
+                                        </FormItem>
+
+                                        <hr/>
+
+                                    </Div>
+                                ))}
+
+                                <FormItem>
                                     <Button
-                                        size='s'
-                                        style={{
-                                            backgroundColor: 'white',
-                                            borderRadius: '15px',
-                                            color: 'black',
-                                            height: '80px',
-                                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-                                            minWidth: '320px',
-                                            margin: '0 auto'
+                                        type="button"
+                                        size="l"
+                                        stretched
+                                        onClick={_ => {
+                                            handleAddWork()
                                         }}
-                                        onClick={() => handleDeleteWork(index)}
                                     >
-                                        <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Убрать место работы</Text>
+                                        Добавить место обучения
                                     </Button>
-                                </Div>
+                                </FormItem>
 
-                                <hr/>
+                                <FormItem>
+                                    <Button
+                                        type="submit"
+                                        size="l"
+                                        stretched
+                                        onClick={_ => {
+                                            handleSubmit()
+                                        }}
+                                    >
+                                        Создать резюме
+                                    </Button>
+                                </FormItem>
 
-                            </Div>
-                        ))}
-                    </Div>
-
-                    <Div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                        margin: '30px 0',
-                        gap: '50px'
-                    }}>
-
-                        <Button
-                            size='l'
-                            style={{
-                                backgroundColor: 'white',
-                                borderRadius: '15px',
-                                color: 'black',
-                                height: '80px',
-                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-                                minWidth: '320px'
-                            }}
-                            onClick={handleAddWork}
-                        >
-                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Добавить место работы</Text>
-                        </Button>
-
-                        <Button
-                            size='l'
-                            style={{
-                                backgroundColor: 'white',
-                                borderRadius: '15px',
-                                color: 'black',
-                                height: '80px',
-                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-                                minWidth: '320px'
-                            }}
-                            onClick={() => {
-                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
-                            }}
-                        >
-                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Вернуться</Text>
-                        </Button>
-                        <Button
-                            size='l'
-                            style={{
-                                backgroundColor: 'white',
-                                borderRadius: '15px',
-                                color: 'black',
-                                height: '80px',
-                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.25)',
-                                minWidth: '320px'
-                            }}
-                            onClick={handleSubmit}
-                        >
-                            <Text style={{color: '#747373', fontSize: '2em', margin: '10px 15px'}}>Создать резюме</Text>
-                        </Button>
+                            </form>
+                        </Card>
                     </Div>
 
                 </Div>
