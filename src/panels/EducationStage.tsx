@@ -66,13 +66,14 @@ export const EducationStage: FC<EdProps> = ({id}) => {
         // TODO: is it legal? Possibly color scheme might be set via VK Bridge / Mini APP Config
         document.documentElement.style.setProperty('--vkui--color_background', '#62a3ee');
         document.documentElement.style.setProperty('--vkui--color_background_content', '#62a3ee');
+        document.documentElement.style.setProperty('--vkui_internal--panel_header_height', '60px');
     }, []);
 
     return (
         <Panel id={id}>
             <PanelHeader
                 before={
-                    <Flex style={{ marginTop: "10px", marginLeft: "8px", marginBottom: "10px" }} gap={10} justify='center'>
+                    <Flex style={{ marginLeft: "10px" }} gap={10} justify='center'>
                         <Image size={40} noBorder={true}
                                src='/logo.svg'/>
                         <PanelHeaderBack
