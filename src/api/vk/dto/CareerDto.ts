@@ -1,3 +1,5 @@
+import {JobAttendanceFormat} from "../../../enums/JobAttendanceFormat.ts";
+
 export class CareerDto {
     constructor(
         public group_id: number,                        // идентификатор сообщества (если доступно, иначе company)
@@ -9,6 +11,7 @@ export class CareerDto {
         public until: number,                           // год окончания работы
         public position: string,                        // должность
         public requirements: string,                    // обязанности
+        public attendanceFormat : JobAttendanceFormat   // формат работы
     ) {
 
     }

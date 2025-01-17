@@ -169,11 +169,11 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
     const handleNextStepButtonClick = async () => {
         if (!userCV || id === undefined) return;
 
-        let userId : number = 0;
+        let userId : number = -1;
         let user: UserDto = null;
 
         try {
-            user = await fetchDataClient.getUserByVkId(fetchedUser!.id);
+            user = await fetchDataClient.getUserByVkId(userCV.vkId);
             userId = user.id;
         } catch (error: any) {
             console.error('Ошибка при получении пользователя:', error.message);
@@ -184,7 +184,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                     userCV.vkId,
                     new UserCreateDto(
                         userCV.email,
-                        String(fetchedUser!.id),
+                        String(userCV.vkId),
                         userCV.phone,
                         userCV.dateOfBirth,
                         userCV.city,
@@ -194,10 +194,10 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
 
                 console.log('Получен пользователь из внутреннего API: ', user);
             } catch (error: any) {
-                console.error('Ошибка сервера: ', error.message);
+                console.error('Ошибка сервера при создании пользователя: ', error.message);
             }
         } finally {
-            if (userId != null) {
+            if (userId != -1) {
                 localStorage.setItem(StorageKeyConstants.USER_ID, String(userId));
 
                 routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {

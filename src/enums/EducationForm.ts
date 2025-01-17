@@ -1,5 +1,5 @@
 export enum EducationForm {
-    FULL_TIME = 'Очная',
-    PART_TIME = 'Заочная',
-    MIXED_MODE = 'Очно-заочная'
+    FULL_TIME = 'FULL_TIME',
+    PART_TIME = 'PART_TIME',
+    CORRESPONDENCE = 'CORRESPONDENCE',
 }

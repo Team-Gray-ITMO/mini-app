@@ -1,10 +1,14 @@
 import axios from "axios";
 import {CompanyDto, EducationDto, EducationInstitutionDto, JobDto, ResumeDto, UserDto} from "./FetchDataClient.ts";
 import {ApiConstants} from "../constants/ApiConstants.ts";
+import {EducationForm} from "../../../enums/EducationForm.ts";
+import {EducationAttendanceFormat} from "../../../enums/EducationAttendanceFormat.ts";
+import {JobAttendanceFormat} from "../../../enums/JobAttendanceFormat.ts";
 
 export class CompanyCreateDto {
     constructor(
-        public name : string
+        public name : string,
+        public url : string,
     ) { }
 }
 
@@ -16,7 +20,8 @@ export class JobCreateDto {
         public location: string,
         public startDate: Date,
         public endDate: Date,
-        public description: string
+        public description: string,
+        public attendanceFormat : JobAttendanceFormat
     ) { }
 }
 
@@ -24,6 +29,9 @@ export class EducationCreateDto {
     constructor(
         public resumeId: number,
         public educationInstitutionId: number,
+        public institutionSubdivision : string,
+        public format : EducationForm,
+        public attendanceFormat : EducationAttendanceFormat,
         public degreeType: string,
         public degreeName: string,
         public fieldOfStudy: string,
