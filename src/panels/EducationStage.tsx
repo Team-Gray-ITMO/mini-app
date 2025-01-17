@@ -80,7 +80,7 @@ export const EducationStage: FC<EdProps> = ({id}) => {
                     />
                 }
                 style={{textAlign: 'center'}}
-            >Ввод данных об образовании (шаг №2 / 3)</PanelHeader>
+            >Ввод данных об образовании (шаг № 2 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Flex justify='center'>
                     <Image size={72} noBorder={true}

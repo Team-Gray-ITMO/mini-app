@@ -238,7 +238,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                     />
                 }
                 style={{textAlign: 'center'}}
-            >Ввод личных данных (шаг №1 / 3)</PanelHeader>
+            >Ввод личных данных (шаг № 1 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Flex justify='center'>
                     <Image size={72} noBorder={true}
