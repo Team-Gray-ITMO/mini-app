@@ -1,11 +1,13 @@
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
 import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
+import {EducationForm} from "../enums/EducationForm.ts";
 
 export class CVDataValidator {
 
     public static MIN_BIRTH_DATE : Date = new Date(1900, 1, 0);
     public static MAX_SUMMARY_LENGTH = 1500;
+    public static MAX_REQUIREMENTS_LENGTH = 1000;
 
     public static validateName(name: string): boolean {
         const nameRegex = /^\p{L}+([-']?\p{L}+)?$/u;
@@ -35,6 +37,38 @@ export class CVDataValidator {
 
     public static validateCity(city : string): boolean {
         return city != null && city.trim().length > 0;
+    }
+
+    public static validateAvatar(avatar : File) : boolean {
+        return avatar != null && avatar.type.startsWith('image/');
+    }
+
+    public static validateCommonText(text: string): boolean {
+        return text != null && text.length > 0;
+    }
+
+    public static validateEducationForm(educationForm : string): boolean {
+        return educationForm != null && (educationForm as EducationForm) != null;
+    }
+
+    public static validateEducationStartYear(educationStartDate : number): boolean {
+        return educationStartDate != null && educationStartDate > 1900 && educationStartDate <= (new Date()).getFullYear();
+    }
+
+    public static validateEducationGraduationYear(educationGraduationDate : number, educationStartDate : number): boolean {
+        return this.validateEducationStartYear(educationGraduationDate) && (educationGraduationDate >= educationStartDate);
+    }
+
+    public static validateEducationGrade(educationGrade : string): boolean {
+        return educationGrade != null && educationGrade.length > 0;
+    }
+
+    public static validateWorkStartYear(workStartYear : number): boolean {
+        return this.validateEducationStartYear(workStartYear);
+    }
+
+    public static validateWorkEndYear(workEndYear : number, workStartYear : number): boolean {
+        return this.validateWorkStartYear(workEndYear) && (workEndYear >= workStartYear);
     }
 
 }
