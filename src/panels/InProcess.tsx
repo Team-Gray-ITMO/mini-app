@@ -13,7 +13,7 @@ export const InProcess: FC<NavIdProps> = ({id}) => {
     return (
         <Panel id={id}>
             <Div className="header-box">
-                <Image size={72} noBorder={true} style={{ marginLeft: '30px', marginTop: '25px'}}
+                <Image size={40} noBorder={true} style={{ marginLeft: '30px', marginTop: '25px'}}
                        src='/logo.svg'/>
             </Div>
             <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", margin: '35px'}}>

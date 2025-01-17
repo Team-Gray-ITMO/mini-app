@@ -230,21 +230,20 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
         <Panel id={id}>
             <PanelHeader
                 before={
-                    <PanelHeaderBack
-                        onClick={() => {
-                            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN);
-                        }}
-                        label={platform === 'vkcom' ? 'Назад' : undefined}
-                    />
+                    <Flex style={{ marginTop: "10px", marginLeft: "8px", marginBottom: "10px" }} gap={10} justify='center'>
+                        <Image size={40} noBorder={true}
+                               src='/logo.svg'/>
+                        <PanelHeaderBack
+                            onClick={() => {
+                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.PATTERN);
+                            }}
+                            label={platform === 'vkcom' ? 'Назад' : undefined}
+                        />
+                    </Flex>
                 }
-                style={{textAlign: 'center'}}
+                style={{textAlign: 'center'  }}
             >Ввод личных данных (шаг № 1 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
-                <Flex justify='center'>
-                    <Image size={72} noBorder={true}
-                           src='/logo.svg'/>
-                </Flex>
-
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
 
                     {userCV &&

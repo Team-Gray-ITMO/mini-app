@@ -132,21 +132,20 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
         <Panel id={id}>
             <PanelHeader
                 before={
-                    <PanelHeaderBack
-                        onClick={() => {
-                            routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
-                        }}
-                        label={platform === 'vkcom' ? 'Назад' : undefined}
-                    />
+                    <Flex style={{ marginTop: "10px", marginLeft: "8px", marginBottom: "10px" }} gap={10} justify='center'>
+                        <Image size={40} noBorder={true}
+                               src='/logo.svg'/>
+                        <PanelHeaderBack
+                            onClick={() => {
+                                routeNavigator.push(DEFAULT_VIEW_PANELS_PATHS.EDUCATION, {state: {cv: userCV}, keepSearchParams: true});
+                            }}
+                            label={platform === 'vkcom' ? 'Назад' : undefined}
+                        />
+                    </Flex>
                 }
                 style={{textAlign: 'center'}}
             >Ввод данных о месте работы (шаг № 3 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
-                <Flex justify='center'>
-                    <Image size={72} noBorder={true}
-                           src='/logo.svg'/>
-                </Flex>
-
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
 
                     <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", minWidth: '100%'}}>
