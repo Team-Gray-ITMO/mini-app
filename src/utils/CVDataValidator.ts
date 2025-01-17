@@ -1,6 +1,7 @@
 import {ConnectionType} from "../enums/ConnectionType.ts";
 import {SpecialityDto} from "../api/internal/dto/SpecialityDto.ts";
 import {JobAttendanceFormat} from "../enums/JobAttendanceFormat.ts";
+import {EducationForm} from "../enums/EducationForm.ts";
 
 export class CVDataValidator {
 
@@ -40,4 +41,25 @@ export class CVDataValidator {
     public static validateAvatar(avatar : File) : boolean {
         return avatar != null && avatar.type.startsWith('image/');
     }
+
+    public static validateCommonText(text: string): boolean {
+        return text != null && text.length > 0;
+    }
+
+    public static validateEducationForm(educationForm : string): boolean {
+        return educationForm != null && (educationForm as EducationForm) != null;
+    }
+
+    public static validateEducationStartYear(educationStartDate : number): boolean {
+        return educationStartDate != null && educationStartDate > 1900 && educationStartDate <= (new Date()).getFullYear();
+    }
+
+    public static validateEducationGraduationYear(educationGraduationDate : number, educationStartDate : number): boolean {
+        return educationGraduationDate != null && educationGraduationDate >= educationStartDate && educationGraduationDate <= (new Date()).getFullYear();
+    }
+
+    public static validateEducationGrade(educationGrade : string): boolean {
+        return educationGrade != null && educationGrade.length > 0;
+    }
+
 }
