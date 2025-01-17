@@ -37,4 +37,7 @@ export class CVDataValidator {
         return city != null && city.trim().length > 0;
     }
 
+    public static validateAvatar(avatar : File) : boolean {
+        return avatar != null && avatar.type.startsWith('image/');
+    }
 }
