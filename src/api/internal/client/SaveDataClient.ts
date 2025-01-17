@@ -91,9 +91,24 @@ export class ResumeUpdateDto {
   constructor(
     public id: number,
     public summary: string,
-    public templateId: number
+    public templateId: number,
+    public preferredAttendanceFormat : JobAttendanceFormat,
+    public preferredSpecialities : string[],
+    public readyForBusinessTrips : boolean,
+    public readyForRelocation : boolean,
+    //public image : FileDto
   ) {
   }
+}
+
+export class FileDto {
+
+    constructor(
+        public filename: string,
+        public contentType: string,
+        public content: ArrayBuffer,
+    ) {
+    }
 }
 
 export class SaveDataClient {
