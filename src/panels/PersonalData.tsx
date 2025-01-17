@@ -144,6 +144,7 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                 parseDate(currentUser?.dateOfBirth),
                 currentUser?.city,
                 true,
+                false,
                 currentUser?.avatar,
                 undefined,
                 currentUser?.universities,
@@ -458,40 +459,49 @@ export const PersonalData: FC<ResumeProps> = ({id, fetchedUser, currentUser, cur
                                     <Input id="city" name='city' value={userCV.city} onChange={handleTextInputChange} />
                                 </FormItem>
 
-                                        <FormItem
-                                            top={
-                                                <FormItem.Top>
-                                                    <FormItem.TopLabel htmlFor="summary">О себе</FormItem.TopLabel>
-                                                    <FormItem.TopAside>{userCV.summary.length}/{CVDataValidator.MAX_SUMMARY_LENGTH}</FormItem.TopAside>
-                                                    <FormItem.TopAside>
-                                                        <Tooltip
-                                                            text="В разделе «О себе» укажите участие в программах
-                                                            VK Education, акцентируя внимание на практическом опыте,
-                                                            реализованных проектах и решённых задачах."
-                                                            placement="right" style={{marginLeft: '10px'}}>
-                                                            <Icon12Question/>
-                                                        </Tooltip>
-                                                    </FormItem.TopAside>
-                                                </FormItem.Top>
-                                            }
-                                        >
-                                            <Textarea
-                                                id="summary"
-                                                name="summary"
-                                                maxLength={CVDataValidator.MAX_SUMMARY_LENGTH}
-                                                value={userCV.summary}
-                                                onChange={handleTextInputChange}
-                                                placeholder="Уточнения навыков, интересы, увлечения..."
-                                            />
-                                        </FormItem>
+                                <FormItem
+                                    top={
+                                        <FormItem.Top>
+                                            <FormItem.TopLabel htmlFor="summary">О себе</FormItem.TopLabel>
+                                            <FormItem.TopAside>{userCV.summary.length}/{CVDataValidator.MAX_SUMMARY_LENGTH}</FormItem.TopAside>
+                                            <FormItem.TopAside>
+                                                <Tooltip
+                                                    text="В разделе «О себе» укажите участие в программах
+                                                    VK Education, акцентируя внимание на практическом опыте,
+                                                    реализованных проектах и решённых задачах."
+                                                    placement="right" style={{marginLeft: '10px'}}>
+                                                    <Icon12Question/>
+                                                </Tooltip>
+                                            </FormItem.TopAside>
+                                        </FormItem.Top>
+                                    }
+                                >
+                                    <Textarea
+                                        id="summary"
+                                        name="summary"
+                                        maxLength={CVDataValidator.MAX_SUMMARY_LENGTH}
+                                        value={userCV.summary}
+                                        onChange={handleTextInputChange}
+                                        placeholder="Уточнения навыков, интересы, увлечения..."
+                                    />
+                                </FormItem>
 
                                 <Checkbox
                                     onChange={e => {
-                                        setCV({...userCV, isReadyToMove: e.target.checked})
+                                        setCV({...userCV, isReadyForBusinessTrips: e.target.checked})
                                     }}
-                                    checked={userCV.isReadyToMove}
+                                    checked={userCV.isReadyForBusinessTrips}
                                 >
-                                    Готов(-а) к переезду или командировкам
+                                    Готов(-а) к командировкам
+                                </Checkbox>
+
+                                <Checkbox
+                                    onChange={e => {
+                                        setCV({...userCV, isReadyForRelocation: e.target.checked})
+                                    }}
+                                    checked={userCV.isReadyForRelocation}
+                                >
+                                    Готов(-а) к переезду
                                 </Checkbox>
 
                                 <FormItem>
