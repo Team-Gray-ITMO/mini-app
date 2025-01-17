@@ -134,7 +134,15 @@ export class TemplateBaseDto {
     constructor(
         public id: number,
         public name: string,
+        public image: ImageDto
     ) {}
+}
+
+export class ImageDto {
+  constructor(
+    public contentBase64: string
+  ) {
+  }
 }
 
 export class FetchDataClient {
@@ -197,7 +205,7 @@ export class FetchDataClient {
           'X-Client-Id': ApiConstants.API_KEY,
         };
 
-        const response = await axios.get<TemplateBaseDto[]>(`${ApiConstants.TEMPLATE_BASE_URL}`, {
+        const response = await axios.get<TemplateBaseDto[]>(`${ApiConstants.TEMPLATE_BASE_URL}/image`, {
           headers
         });
 
@@ -226,7 +234,7 @@ export class FetchDataClient {
 
       return response.data.map((item) => {
         console.log("CV item: ", item)
-        return new CVHistory(item.id, item.summary, this.formatDate(item.createdAt))
+        return new CVHistory(item.id, item.title, this.formatDate(item.createdAt))
       });
     } catch (error) {
       if (error.response && error.response.status === 404) {

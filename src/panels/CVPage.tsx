@@ -4,7 +4,7 @@ import {
   Div,
   List, Text, Image, NavIdProps
 } from '@vkontakte/vkui';
-import {FC, useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {useMetaParams, useParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import '../styles/CVPage.css';
 import {InProcess} from "./InProcess.tsx";
@@ -85,8 +85,8 @@ export const CVPage: FC<CVPageProps> = ({id, fetchedUser}) => {
     return (
         <Panel id={id} className="cv-page">
             <Div className="header-box">
-                <Image noBorder={true} style={{width: '95px', height: '65px', marginLeft: '30px', marginTop: '25px'}}
-                       src='/logo.png'/>
+                <Image size={72} noBorder={true} style={{ marginLeft: '30px', marginTop: '25px'}}
+                       src='/logo.svg'/>
             </Div>
             <Div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: "40px", margin: '35px'}}>
 

@@ -10,7 +10,7 @@ import {
     usePlatform
 } from "@vkontakte/vkui";
 import {CV} from "../models/CV.ts";
-import {FC, useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {DEFAULT_VIEW_PANELS_PATHS} from "../routes.ts";
 import {useMetaParams, useRouteNavigator} from "@vkontakte/vk-mini-apps-router";
 import {createNewWorkExperience} from "../utils/internalMapping.ts";
@@ -147,7 +147,8 @@ export const WorkStage: FC<WorkProps> = ({id}) => {
             >Ввод данных о месте работы (шаг №3 / 3)</PanelHeader>
             <Div style={{width: '90%'}}>
                 <Flex justify='center'>
-                    <Image size={70} src='/logo.svg'/>
+                    <Image size={72} noBorder={true}
+                           src='/logo.svg'/>
                 </Flex>
 
                 <Div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>
