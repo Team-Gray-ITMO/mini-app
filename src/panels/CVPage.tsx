@@ -77,11 +77,6 @@ export const CVPage: FC<CVPageProps> = ({id, fetchedUser}) => {
       fetchDataClient.getResumeAsDocx(parseInt(resumeId), fetchedUser!.id)
     }
 
-    if (loading) {
-        return (
-            <InProcess/>
-        );
-    }
     return (
         <Panel id={id} className="cv-page">
             <Div className="header-box">
